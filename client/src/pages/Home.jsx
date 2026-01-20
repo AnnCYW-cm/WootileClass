@@ -30,8 +30,9 @@ export const Home = () => {
       <div className="bg-indigo-600">
         <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
-            教师教学平台
+            木瓦课堂
           </h1>
+          <p className="mt-3 text-indigo-200 text-lg">WootileClass</p>
           <p className="mt-6 max-w-2xl mx-auto text-xl text-indigo-100">
             专为K12教师打造的智能教学助手，轻松管理班级，趣味点名
           </p>
@@ -96,7 +97,7 @@ export const Home = () => {
       <footer className="bg-white">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <p className="text-center text-gray-500">
-            &copy; 2024 教师教学平台. All rights reserved.
+            &copy; 2024 木瓦课堂 WootileClass. All rights reserved.
           </p>
         </div>
       </footer>

@@ -1,25 +1,49 @@
-# 教师教学平台 MVP
+# 木瓦课堂 WootileClass
 
-面向K12教师的Web端教学管理平台，实现班级管理和点名系统两大核心功能。
+面向K12教师的Web端教学管理平台，集课堂管理工具于一体，帮助教师提升课堂效率。
 
 ## 功能特性
 
-### 班级管理
-- 创建/编辑/删除班级
+### V1.0 核心功能
+
+#### 班级管理
+- 创建/编辑/删除/归档班级
 - Excel批量导入学生
 - 手动添加/编辑/删除学生
 
-### 点名系统
-- 转盘点名 - 旋转动画随机抽取学生
-- 抽卡点名 - 翻牌动画随机抽取学生
+#### 点名系统
+- 转盘点名 - 旋转动画随机抽取
+- 抽卡点名 - 翻牌动画随机抽取
+- 弹幕点名 - 姓名飞屏后定格
+- 分组点名 - 随机分组后抽取
 - 按序点名 - 按顺序逐个点名
 - 快速签到 - 全班一键签到
 
-### 出勤状态
-- 出勤
-- 缺勤
-- 迟到
-- 请假
+#### 学生积分
+- 积分加减分
+- 快捷加分预设
+- 积分排行榜（日/周/月/总榜）
+- 投屏展示模式
+- 积分规则自定义
+
+### V1.1 作业管理
+- 课堂作业（老师上传）
+- 家庭作业（学生扫码提交）
+- 在线批改打分
+- 快捷评语
+- 提交统计分析
+
+### V1.3 数据统计
+- 出勤统计报表
+- 积分统计报表
+- 作业统计报表
+- CSV数据导出
+
+### V2.0 课堂工具
+- 课堂计时器（倒计时/正计时）
+- 噪音监测（麦克风检测）
+- 分组工具（随机分组）
+- 座位表（可视化编排）
 
 ## 技术栈
 
@@ -71,66 +95,30 @@ npm run dev
 ## 项目结构
 
 ```
-teacher-platform/
+WootileClass/
 ├── client/                 # 前端项目
 │   ├── src/
 │   │   ├── components/     # 通用组件
 │   │   ├── pages/          # 页面组件
-│   │   ├── hooks/          # 自定义Hooks
 │   │   ├── services/       # API调用
-│   │   ├── store/          # 状态管理
-│   │   └── utils/          # 工具函数
+│   │   └── store/          # 状态管理
 │   └── package.json
 ├── server/                 # 后端项目
 │   ├── routes/             # 路由
 │   ├── controllers/        # 控制器
-│   ├── models/             # 数据模型
 │   ├── middleware/         # 中间件
 │   ├── db/                 # 数据库配置
 │   └── package.json
 └── README.md
 ```
 
-## API 接口
-
-### 用户认证
-- `POST /api/auth/register` - 注册
-- `POST /api/auth/login` - 登录
-- `GET /api/auth/profile` - 获取用户信息
-
-### 班级管理
-- `GET /api/classes` - 获取班级列表
-- `POST /api/classes` - 创建班级
-- `PUT /api/classes/:id` - 更新班级
-- `DELETE /api/classes/:id` - 删除班级
-
-### 学生管理
-- `GET /api/students/class/:classId` - 获取学生列表
-- `POST /api/students/class/:classId` - 添加学生
-- `POST /api/students/class/:classId/import` - Excel导入学生
-- `PUT /api/students/:id` - 更新学生
-- `DELETE /api/students/:id` - 删除学生
-
-### 点名
-- `GET /api/attendance/class/:classId` - 获取点名记录
-- `POST /api/attendance/class/:classId` - 记录点名
-- `POST /api/attendance/class/:classId/batch` - 批量点名
-- `GET /api/attendance/class/:classId/random` - 随机抽取学生
-
-## Excel 导入格式
-
-支持 `.xlsx` 和 `.xls` 格式，列名支持：
-
-| 中文列名 | 英文列名 |
-|---------|---------|
-| 姓名 | name |
-| 学号 | student_no |
-| 性别 | gender |
-
 ## 使用说明
 
 1. 注册账户并登录
 2. 在"班级管理"页面创建班级
 3. 添加学生或导入Excel学生名单
-4. 进入"点名系统"选择班级
-5. 选择点名方式进行点名
+4. 使用各种课堂工具进行教学管理
+
+## License
+
+MIT

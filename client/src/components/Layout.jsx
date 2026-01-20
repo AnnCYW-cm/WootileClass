@@ -12,7 +12,7 @@ export const PublicLayout = () => {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link to="/" className="text-xl font-bold text-indigo-600">
-                教师教学平台
+                木瓦课堂
               </Link>
             </div>
             <div className="flex items-center space-x-4">
@@ -67,7 +67,7 @@ export const DashboardLayout = () => {
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
               <Link to="/dashboard" className="text-xl font-bold text-indigo-600">
-                教师教学平台
+                木瓦课堂
               </Link>
               <div className="hidden md:flex space-x-1">
                 <Link
