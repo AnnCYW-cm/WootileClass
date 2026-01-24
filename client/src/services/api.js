@@ -116,3 +116,21 @@ export const assignmentsApi = {
   getByCode: (code) => request(`/assignments/submit/${code}`),
   submitByCode: (code, data) => request(`/assignments/submit/${code}`, { method: 'POST', body: JSON.stringify(data) }),
 };
+
+// Redemption API
+export const redemptionApi = {
+  getRewards: (classId) => request(`/redemption/classes/${classId}/rewards`),
+  createReward: (classId, data) => request(`/redemption/classes/${classId}/rewards`, { method: 'POST', body: JSON.stringify(data) }),
+  updateReward: (id, data) => request(`/redemption/rewards/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteReward: (id) => request(`/redemption/rewards/${id}`, { method: 'DELETE' }),
+  redeem: (classId, data) => request(`/redemption/classes/${classId}/redeem`, { method: 'POST', body: JSON.stringify(data) }),
+  getHistory: (classId) => request(`/redemption/classes/${classId}/redemption-history`),
+  getStudentRedemptions: (studentId) => request(`/redemption/students/${studentId}/redemptions`),
+};
+
+// Membership API
+export const membershipApi = {
+  getPlans: () => request('/membership/plans'),
+  getStatus: () => request('/membership/status'),
+  purchase: (data) => request('/membership/purchase', { method: 'POST', body: JSON.stringify(data) }),
+};

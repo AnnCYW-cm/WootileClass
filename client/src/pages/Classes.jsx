@@ -86,27 +86,27 @@ export const Classes = () => {
   const displayClasses = showArchived ? archivedClasses : activeClasses;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">班级管理</h1>
+        <h1 className="text-3xl font-bold text-gray-900">班级管理</h1>
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center bg-gray-100 rounded-xl p-1">
             <button
               onClick={() => setShowArchived(false)}
-              className={`px-3 py-1 rounded-md text-sm ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 !showArchived
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-white text-purple-600 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               活跃 ({activeClasses.length})
             </button>
             <button
               onClick={() => setShowArchived(true)}
-              className={`px-3 py-1 rounded-md text-sm ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 showArchived
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-white text-purple-600 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               已归档 ({archivedClasses.length})
@@ -114,7 +114,7 @@ export const Classes = () => {
           </div>
           <button
             onClick={() => openModal()}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+            className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg shadow-purple-500/25"
           >
             创建班级
           </button>
@@ -122,43 +122,43 @@ export const Classes = () => {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[1, 2, 3].map((n) => (
-            <div key={n} className="bg-white rounded-lg shadow p-6 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            <div key={n} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 animate-pulse">
+              <div className="h-5 bg-gray-100 rounded-full w-3/4 mb-5"></div>
+              <div className="h-4 bg-gray-100 rounded-full w-1/2"></div>
             </div>
           ))}
         </div>
       ) : displayClasses.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayClasses.map((cls) => (
             <div
               key={cls.id}
-              className={`bg-white rounded-lg shadow hover:shadow-md transition-shadow ${
+              className={`bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-purple-200 transition-all ${
                 cls.status === 'archived' ? 'opacity-75' : ''
               }`}
             >
-              <div className="p-6">
+              <div className="p-7">
                 <div className="flex justify-between items-start">
                   <div>
                     <div className="flex items-center space-x-2">
                       <h3 className="text-lg font-semibold text-gray-900">{cls.name}</h3>
                       {cls.status === 'archived' && (
-                        <span className="px-2 py-0.5 text-xs bg-gray-200 text-gray-600 rounded">
+                        <span className="px-2 py-0.5 text-xs bg-gray-100 text-gray-500 rounded-full font-medium">
                           已归档
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-400 mt-1.5">
                       {cls.grade && <span className="mr-2">{cls.grade}</span>}
                       {cls.subject && <span>{cls.subject}</span>}
                     </p>
                   </div>
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-1">
                     <button
                       onClick={() => openModal(cls)}
-                      className="text-gray-400 hover:text-indigo-600"
+                      className="p-2 rounded-lg text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-colors"
                       title="编辑"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,7 +167,7 @@ export const Classes = () => {
                     </button>
                     <button
                       onClick={() => handleArchive(cls)}
-                      className="text-gray-400 hover:text-yellow-600"
+                      className="p-2 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
                       title={cls.status === 'archived' ? '恢复' : '归档'}
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -180,7 +180,7 @@ export const Classes = () => {
                     </button>
                     <button
                       onClick={() => handleDelete(cls.id)}
-                      className="text-gray-400 hover:text-red-600"
+                      className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                       title="删除"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,40 +189,48 @@ export const Classes = () => {
                     </button>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center text-sm text-gray-500">
-                  <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  {cls.student_count || 0} 名学生
+                <div className="mt-6 flex items-center text-sm text-gray-400">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center mr-3">
+                    <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  </div>
+                  <span className="font-medium">{cls.student_count || 0}</span>
+                  <span className="ml-1">名学生</span>
                 </div>
               </div>
-              <div className="border-t border-gray-100 px-6 py-3 bg-gray-50 rounded-b-lg">
+              <div className="border-t border-gray-100 px-7 py-5 bg-gray-50/50 rounded-b-2xl">
                 <Link
                   to={`/dashboard/classes/${cls.id}`}
-                  className="text-indigo-600 hover:text-indigo-500 text-sm font-medium"
+                  className="text-purple-600 hover:text-purple-700 text-sm font-medium flex items-center group"
                 >
-                  管理学生 &rarr;
+                  管理学生
+                  <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </Link>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow p-12 text-center">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-          </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-14 text-center">
+          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center">
+            <svg className="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
+          <h3 className="mt-5 text-xl font-medium text-gray-900">
             {showArchived ? '没有已归档的班级' : '还没有班级'}
           </h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-3 text-gray-500">
             {showArchived ? '归档的班级会显示在这里' : '创建您的第一个班级开始使用'}
           </p>
           {!showArchived && (
-            <div className="mt-6">
+            <div className="mt-8">
               <button
                 onClick={() => openModal()}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-purple-500/25"
               >
                 创建班级
               </button>
@@ -233,32 +241,32 @@ export const Classes = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-semibold mb-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-10 w-full max-w-md shadow-2xl">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">
               {editingClass ? '编辑班级' : '创建班级'}
             </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm">
+                <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm">
                   {error}
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-gray-700">班级名称 *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">班级名称 *</label>
                 <input
                   type="text"
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="例如：三年级1班"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">年级</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">年级</label>
                 <select
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow bg-white"
                   value={formData.grade}
                   onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
                 >
@@ -269,9 +277,9 @@ export const Classes = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">学科</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">学科</label>
                 <select
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow bg-white"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 >
@@ -281,17 +289,17 @@ export const Classes = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex justify-end space-x-3 pt-4">
+              <div className="flex justify-end space-x-4 pt-6">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-5 py-2.5 border border-gray-200 rounded-xl text-gray-700 font-medium hover:bg-gray-50 transition-colors"
                 >
                   取消
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                  className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
                 >
                   {editingClass ? '保存' : '创建'}
                 </button>

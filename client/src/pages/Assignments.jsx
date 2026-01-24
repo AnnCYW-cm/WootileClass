@@ -139,23 +139,23 @@ export const Assignments = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">作业管理</h1>
+        <h1 className="text-3xl font-bold text-gray-900">作业管理</h1>
         <button
           onClick={() => openModal()}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 shadow-lg shadow-purple-500/25"
         >
           布置作业
         </button>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 items-center">
+      <div className="flex flex-wrap gap-6 items-center">
         <select
           value={selectedClass}
           onChange={(e) => setSelectedClass(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          className="px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
         >
           <option value="">所有班级</option>
           {classes.map((cls) => (
@@ -163,7 +163,7 @@ export const Assignments = () => {
           ))}
         </select>
 
-        <div className="flex space-x-2">
+        <div className="bg-gray-100 rounded-xl p-1 inline-flex">
           {[
             { key: 'active', label: '进行中' },
             { key: 'archived', label: '已归档' },
@@ -172,10 +172,10 @@ export const Assignments = () => {
             <button
               key={item.key}
               onClick={() => setFilter(item.key)}
-              className={`px-3 py-1.5 rounded-md text-sm ${
+              className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 filter === item.key
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-white text-purple-600 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               {item.label}
@@ -186,24 +186,24 @@ export const Assignments = () => {
 
       {/* Assignment List */}
       {loading ? (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {[1, 2, 3].map((n) => (
-            <div key={n} className="bg-white rounded-lg shadow p-6 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            <div key={n} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 animate-pulse">
+              <div className="h-5 bg-gray-100 rounded-full w-1/3 mb-5"></div>
+              <div className="h-4 bg-gray-100 rounded-full w-1/2"></div>
             </div>
           ))}
         </div>
       ) : assignments.length > 0 ? (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {assignments.map((assignment) => (
             <div
               key={assignment.id}
-              className={`bg-white rounded-lg shadow hover:shadow-md transition-shadow ${
+              className={`bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-purple-200 transition-all ${
                 assignment.status === 'archived' ? 'opacity-75' : ''
               }`}
             >
-              <div className="p-6">
+              <div className="p-8">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3">
@@ -225,7 +225,7 @@ export const Assignments = () => {
                   <div className="flex space-x-2 ml-4">
                     <button
                       onClick={() => openModal(assignment)}
-                      className="text-gray-400 hover:text-indigo-600"
+                      className="text-gray-400 hover:text-purple-600"
                       title="编辑"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -277,7 +277,7 @@ export const Assignments = () => {
                     )}
                     <Link
                       to={`/dashboard/assignments/${assignment.id}`}
-                      className="text-sm text-indigo-600 hover:text-indigo-500 font-medium"
+                      className="text-sm text-purple-600 hover:text-purple-500 font-medium"
                     >
                       查看批改 &rarr;
                     </Link>
@@ -288,21 +288,23 @@ export const Assignments = () => {
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow p-12 text-center">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-14 text-center">
+          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center">
+            <svg className="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h3 className="mt-5 text-xl font-medium text-gray-900">
             {filter === 'archived' ? '没有已归档的作业' : '还没有作业'}
           </h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-3 text-gray-500">
             {filter === 'archived' ? '归档的作业会显示在这里' : '点击"布置作业"创建第一个作业'}
           </p>
           {filter !== 'archived' && (
-            <div className="mt-6">
+            <div className="mt-8">
               <button
                 onClick={() => openModal()}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                className="inline-flex items-center px-6 py-3 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 shadow-lg shadow-purple-500/25"
               >
                 布置作业
               </button>
@@ -313,14 +315,14 @@ export const Assignments = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-lg">
-            <h2 className="text-xl font-semibold mb-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-10 w-full max-w-lg shadow-2xl">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">
               {editingAssignment ? '编辑作业' : '布置作业'}
             </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm">
+                <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm">
                   {error}
                 </div>
               )}
@@ -330,7 +332,7 @@ export const Assignments = () => {
                 <select
                   required
                   disabled={!!editingAssignment}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100"
+                  className="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
                   value={formData.class_id}
                   onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}
                 >
@@ -348,7 +350,7 @@ export const Assignments = () => {
                     <input
                       type="radio"
                       disabled={!!editingAssignment}
-                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                      className="h-4 w-4 text-purple-600 focus:ring-indigo-500"
                       checked={formData.type === 'classroom'}
                       onChange={() => setFormData({ ...formData, type: 'classroom' })}
                     />
@@ -359,7 +361,7 @@ export const Assignments = () => {
                     <input
                       type="radio"
                       disabled={!!editingAssignment}
-                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                      className="h-4 w-4 text-purple-600 focus:ring-indigo-500"
                       checked={formData.type === 'homework'}
                       onChange={() => setFormData({ ...formData, type: 'homework' })}
                     />
@@ -374,7 +376,7 @@ export const Assignments = () => {
                 <input
                   type="text"
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   placeholder="例如：第三单元课后练习"
@@ -385,7 +387,7 @@ export const Assignments = () => {
                 <label className="block text-sm font-medium text-gray-700">作业描述</label>
                 <textarea
                   rows={3}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="作业要求说明（选填）"
@@ -396,23 +398,23 @@ export const Assignments = () => {
                 <label className="block text-sm font-medium text-gray-700">截止时间</label>
                 <input
                   type="datetime-local"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   value={formData.deadline}
                   onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
                 />
               </div>
 
-              <div className="flex justify-end space-x-3 pt-4">
+              <div className="flex justify-end space-x-4 pt-6">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-5 py-2.5 border border-gray-200 rounded-xl text-gray-700 font-medium hover:bg-gray-50 transition-colors"
                 >
                   取消
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                  className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
                 >
                   {editingAssignment ? '保存' : '创建'}
                 </button>

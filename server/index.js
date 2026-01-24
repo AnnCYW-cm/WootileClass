@@ -8,6 +8,8 @@ import studentRoutes from './routes/students.js';
 import attendanceRoutes from './routes/attendance.js';
 import scoreRoutes from './routes/scores.js';
 import assignmentRoutes from './routes/assignments.js';
+import redemptionRoutes from './routes/redemption.js';
+import membershipRoutes from './routes/membership.js';
 
 dotenv.config();
 
@@ -25,6 +27,8 @@ app.use('/api/students', studentRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/scores', scoreRoutes);
 app.use('/api/assignments', assignmentRoutes);
+app.use('/api/redemption', redemptionRoutes);
+app.use('/api/membership', membershipRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

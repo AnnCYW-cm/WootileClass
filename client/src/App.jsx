@@ -17,6 +17,8 @@ import { Statistics } from './pages/Statistics';
 import { ClassroomTools } from './pages/ClassroomTools';
 import { Groups } from './pages/Groups';
 import { SeatingChart } from './pages/SeatingChart';
+import Redemption from './pages/Redemption';
+import Membership from './pages/Membership';
 import './index.css';
 
 function App() {
@@ -54,6 +56,8 @@ function App() {
             <Route path="tools" element={<ClassroomTools />} />
             <Route path="groups" element={<Groups />} />
             <Route path="seating" element={<SeatingChart />} />
+            <Route path="redemption/:classId" element={<Redemption />} />
+            <Route path="membership" element={<Membership />} />
           </Route>
         </Routes>
       </BrowserRouter>

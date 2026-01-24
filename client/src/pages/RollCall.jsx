@@ -230,7 +230,7 @@ export const RollCall = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
@@ -244,13 +244,13 @@ export const RollCall = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">点名系统</h1>
+        <h1 className="text-3xl font-bold text-gray-900">点名系统</h1>
         <select
           value={selectedClass || ''}
           onChange={(e) => setSelectedClass(Number(e.target.value))}
-          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          className="px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
         >
           {classes.map((cls) => (
             <option key={cls.id} value={cls.id}>
@@ -261,43 +261,41 @@ export const RollCall = () => {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8 overflow-x-auto">
-          {[
-            { key: 'spin', label: '转盘点名' },
-            { key: 'card', label: '抽卡点名' },
-            { key: 'bullet', label: '弹幕点名' },
-            { key: 'group', label: '分组点名' },
-            { key: 'order', label: '按序点名' },
-            { key: 'quick', label: '快速签到' },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === tab.key
-                  ? 'border-indigo-500 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+      <div className="bg-gray-100 rounded-xl p-1 inline-flex">
+        {[
+          { key: 'spin', label: '转盘点名' },
+          { key: 'card', label: '抽卡点名' },
+          { key: 'bullet', label: '弹幕点名' },
+          { key: 'group', label: '分组点名' },
+          { key: 'order', label: '按序点名' },
+          { key: 'quick', label: '快速签到' },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`px-5 py-2.5 rounded-lg font-medium text-sm transition-all ${
+              activeTab === tab.key
+                ? 'bg-white text-purple-600 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {students.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-12 text-center">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-14 text-center">
           <p className="text-gray-500">该班级还没有学生</p>
         </div>
       ) : (
         <>
           {/* Spin Mode */}
           {activeTab === 'spin' && (
-            <div className="bg-white rounded-lg shadow p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10">
               <div className="text-center">
-                <div className="relative w-64 h-64 mx-auto mb-8">
-                  <div className="absolute inset-0 rounded-full border-8 border-indigo-200 flex items-center justify-center bg-gradient-to-br from-indigo-50 to-white">
+                <div className="relative w-72 h-72 mx-auto mb-10">
+                  <div className="absolute inset-0 rounded-full border-8 border-purple-200 flex items-center justify-center bg-gradient-to-br from-purple-50 to-white">
                     <AnimatePresence mode="wait">
                       {isSpinning ? (
                         <motion.div
@@ -306,7 +304,7 @@ export const RollCall = () => {
                           animate={{ scale: 1, opacity: 1 }}
                           exit={{ scale: 0.8, opacity: 0 }}
                           transition={{ duration: 0.05 }}
-                          className="text-4xl font-bold text-indigo-600"
+                          className="text-4xl font-bold text-purple-600"
                         >
                           {students[spinningIndex]?.name}
                         </motion.div>
@@ -316,7 +314,7 @@ export const RollCall = () => {
                           animate={{ scale: 1, opacity: 1 }}
                           className="text-center"
                         >
-                          <div className="text-4xl font-bold text-indigo-600 mb-2">
+                          <div className="text-4xl font-bold text-purple-600 mb-2">
                             {selectedStudent.name}
                           </div>
                           <div className="text-gray-500">
@@ -332,7 +330,7 @@ export const RollCall = () => {
                 <button
                   onClick={startSpin}
                   disabled={isSpinning}
-                  className="px-8 py-3 bg-indigo-600 text-white rounded-full text-lg font-medium hover:bg-indigo-700 disabled:opacity-50 transition-all"
+                  className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full text-lg font-medium hover:opacity-90 disabled:opacity-50 transition-all"
                 >
                   {isSpinning ? '抽取中...' : '开始抽取'}
                 </button>
@@ -349,7 +347,7 @@ export const RollCall = () => {
                         <button
                           key={key}
                           onClick={() => recordAttendance(key)}
-                          className={`px-4 py-2 rounded-md text-white ${color} hover:opacity-80 ${
+                          className={`px-4 py-2 rounded-xl text-white ${color} hover:opacity-80 ${
                             attendanceRecords[selectedStudent.id] === key ? 'ring-2 ring-offset-2 ring-gray-400' : ''
                           }`}
                         >
@@ -365,7 +363,7 @@ export const RollCall = () => {
 
           {/* Card Mode */}
           {activeTab === 'card' && (
-            <div className="bg-white rounded-lg shadow p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10">
               <div className="text-center">
                 <div className="relative w-48 h-64 mx-auto mb-8 perspective-1000">
                   <motion.div
@@ -376,19 +374,19 @@ export const RollCall = () => {
                   >
                     {/* Card Front */}
                     <div
-                      className="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center backface-hidden"
+                      className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center backface-hidden"
                       style={{ backfaceVisibility: 'hidden' }}
                     >
                       <div className="text-white text-6xl">?</div>
                     </div>
                     {/* Card Back */}
                     <div
-                      className="absolute inset-0 rounded-xl bg-white border-4 border-indigo-200 flex items-center justify-center"
+                      className="absolute inset-0 rounded-xl bg-white border-4 border-purple-200 flex items-center justify-center"
                       style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                     >
                       {selectedStudent ? (
                         <div className="text-center p-4">
-                          <div className="text-3xl font-bold text-indigo-600 mb-2">
+                          <div className="text-3xl font-bold text-purple-600 mb-2">
                             {selectedStudent.name}
                           </div>
                           <div className="text-gray-500 text-sm">
@@ -404,7 +402,7 @@ export const RollCall = () => {
                 <button
                   onClick={flipCard}
                   disabled={isSpinning}
-                  className="px-8 py-3 bg-indigo-600 text-white rounded-full text-lg font-medium hover:bg-indigo-700 disabled:opacity-50 transition-all"
+                  className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full text-lg font-medium hover:opacity-90 disabled:opacity-50 transition-all"
                 >
                   {isSpinning ? '翻牌中...' : '翻牌抽取'}
                 </button>
@@ -421,7 +419,7 @@ export const RollCall = () => {
                         <button
                           key={key}
                           onClick={() => recordAttendance(key)}
-                          className={`px-4 py-2 rounded-md text-white ${color} hover:opacity-80 ${
+                          className={`px-4 py-2 rounded-xl text-white ${color} hover:opacity-80 ${
                             attendanceRecords[selectedStudent.id] === key ? 'ring-2 ring-offset-2 ring-gray-400' : ''
                           }`}
                         >
@@ -437,7 +435,7 @@ export const RollCall = () => {
 
           {/* Bullet Screen Mode */}
           {activeTab === 'bullet' && (
-            <div className="bg-white rounded-lg shadow p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10">
               <div className="text-center">
                 <div className="relative w-full h-64 mx-auto mb-8 bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg overflow-hidden">
                   {isSpinning && bulletNames.map((bullet) => (
@@ -481,7 +479,7 @@ export const RollCall = () => {
                 <button
                   onClick={startBullet}
                   disabled={isSpinning}
-                  className="px-8 py-3 bg-indigo-600 text-white rounded-full text-lg font-medium hover:bg-indigo-700 disabled:opacity-50 transition-all"
+                  className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full text-lg font-medium hover:opacity-90 disabled:opacity-50 transition-all"
                 >
                   {isSpinning ? '抽取中...' : '开始弹幕'}
                 </button>
@@ -498,7 +496,7 @@ export const RollCall = () => {
                         <button
                           key={key}
                           onClick={() => recordAttendance(key)}
-                          className={`px-4 py-2 rounded-md text-white ${color} hover:opacity-80 ${
+                          className={`px-4 py-2 rounded-xl text-white ${color} hover:opacity-80 ${
                             attendanceRecords[selectedStudent.id] === key ? 'ring-2 ring-offset-2 ring-gray-400' : ''
                           }`}
                         >
@@ -514,13 +512,13 @@ export const RollCall = () => {
 
           {/* Group Mode */}
           {activeTab === 'group' && (
-            <div className="bg-white rounded-lg shadow p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10">
               <div className="mb-6 flex items-center justify-center space-x-4">
                 <span className="text-gray-600">分组数量：</span>
                 <select
                   value={groupCount}
                   onChange={(e) => setGroupCount(Number(e.target.value))}
-                  className="px-3 py-2 border border-gray-300 rounded-md"
+                  className="px-3 py-2 border border-gray-300 rounded-xl"
                 >
                   {[2, 3, 4, 5, 6, 8].map((n) => (
                     <option key={n} value={n}>{n}组</option>
@@ -528,7 +526,7 @@ export const RollCall = () => {
                 </select>
                 <button
                   onClick={generateGroups}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:opacity-90"
                 >
                   随机分组
                 </button>
@@ -541,8 +539,8 @@ export const RollCall = () => {
                       key={group.id}
                       className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                         selectedGroup?.id === group.id
-                          ? 'border-indigo-500 bg-indigo-50'
-                          : 'border-gray-200 hover:border-indigo-300'
+                          ? 'border-purple-500 bg-purple-50'
+                          : 'border-gray-200 hover:border-purple-300'
                       }`}
                       onClick={() => pickFromGroup(group)}
                     >
@@ -554,7 +552,7 @@ export const RollCall = () => {
                             key={s.id}
                             className={`px-2 py-0.5 text-xs rounded ${
                               selectedStudent?.id === s.id
-                                ? 'bg-indigo-600 text-white'
+                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
                                 : 'bg-gray-100 text-gray-600'
                             }`}
                           >
@@ -577,7 +575,7 @@ export const RollCall = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="text-center"
                 >
-                  <div className="text-3xl font-bold text-indigo-600 mb-4">
+                  <div className="text-3xl font-bold text-purple-600 mb-4">
                     {selectedGroup?.name}：{selectedStudent.name}
                   </div>
                   <p className="text-gray-600 mb-4">记录出勤状态：</p>
@@ -586,7 +584,7 @@ export const RollCall = () => {
                       <button
                         key={key}
                         onClick={() => recordAttendance(key)}
-                        className={`px-4 py-2 rounded-md text-white ${color} hover:opacity-80 ${
+                        className={`px-4 py-2 rounded-xl text-white ${color} hover:opacity-80 ${
                           attendanceRecords[selectedStudent.id] === key ? 'ring-2 ring-offset-2 ring-gray-400' : ''
                         }`}
                       >
@@ -601,7 +599,7 @@ export const RollCall = () => {
 
           {/* Order Mode */}
           {activeTab === 'order' && (
-            <div className="bg-white rounded-lg shadow p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10">
               <div className="text-center mb-8">
                 <p className="text-gray-600 mb-2">
                   当前学生（{currentStudentIndex + 1}/{students.length}）
@@ -613,7 +611,7 @@ export const RollCall = () => {
                     animate={{ opacity: 1, x: 0 }}
                     className="py-8"
                   >
-                    <div className="text-5xl font-bold text-indigo-600 mb-2">
+                    <div className="text-5xl font-bold text-purple-600 mb-2">
                       {students[currentStudentIndex].name}
                     </div>
                     <div className="text-gray-500">
@@ -626,7 +624,7 @@ export const RollCall = () => {
                     <div className="text-2xl text-green-600 mb-2">点名完成！</div>
                     <button
                       onClick={() => setCurrentStudentIndex(0)}
-                      className="text-indigo-600 hover:text-indigo-500"
+                      className="text-purple-600 hover:text-indigo-500"
                     >
                       重新开始
                     </button>
@@ -640,7 +638,7 @@ export const RollCall = () => {
                     <button
                       key={key}
                       onClick={() => markQuickAttendance(key)}
-                      className={`px-6 py-3 rounded-md text-white text-lg ${color} hover:opacity-80`}
+                      className={`px-6 py-3 rounded-xl text-white text-lg ${color} hover:opacity-80`}
                     >
                       {label}
                     </button>
@@ -652,14 +650,14 @@ export const RollCall = () => {
                 <button
                   onClick={() => setCurrentStudentIndex(Math.max(0, currentStudentIndex - 1))}
                   disabled={currentStudentIndex === 0}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                  className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                 >
                   上一个
                 </button>
                 <button
                   onClick={() => setCurrentStudentIndex(Math.min(students.length, currentStudentIndex + 1))}
                   disabled={currentStudentIndex >= students.length}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                  className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                 >
                   跳过
                 </button>
@@ -669,14 +667,14 @@ export const RollCall = () => {
 
           {/* Quick Mode */}
           {activeTab === 'quick' && (
-            <div className="bg-white rounded-lg shadow">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
               <div className="p-4 border-b border-gray-200 flex justify-between items-center">
                 <span className="text-gray-600">
                   已签到：{Object.keys(attendanceRecords).length}/{students.length}
                 </span>
                 <button
                   onClick={markAllPresent}
-                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                  className="px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700"
                 >
                   全部出勤
                 </button>
@@ -691,7 +689,7 @@ export const RollCall = () => {
                         className={`relative p-3 rounded-lg border-2 transition-all ${
                           status
                             ? `border-transparent ${ATTENDANCE_STATUS[status].color} bg-opacity-10`
-                            : 'border-gray-200 hover:border-indigo-300'
+                            : 'border-gray-200 hover:border-purple-300'
                         }`}
                       >
                         <div className="text-center">

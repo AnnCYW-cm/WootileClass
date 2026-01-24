@@ -131,6 +131,48 @@ export const initDb = async () => {
       )
     `);
 
+    // Create redemption_rewards table (rewards that can be redeemed with points)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS redemption_rewards (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id),
+        class_id INTEGER REFERENCES classes(id) ON DELETE CASCADE,
+        name VARCHAR(100) NOT NULL,
+        description TEXT,
+        points_required INTEGER NOT NULL,
+        icon VARCHAR(50),
+        stock INTEGER DEFAULT -1,
+        status VARCHAR(20) DEFAULT 'active',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Create redemption_records table (history of point redemptions)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS redemption_records (
+        id SERIAL PRIMARY KEY,
+        reward_id INTEGER REFERENCES redemption_rewards(id),
+        student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+        class_id INTEGER REFERENCES classes(id),
+        points_spent INTEGER NOT NULL,
+        status VARCHAR(20) DEFAULT 'pending',
+        redeemed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Add membership columns to users table if not exists
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'membership_type') THEN
+          ALTER TABLE users ADD COLUMN membership_type VARCHAR(20) DEFAULT 'free';
+        END IF;
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'membership_expires_at') THEN
+          ALTER TABLE users ADD COLUMN membership_expires_at TIMESTAMP;
+        END IF;
+      END $$;
+    `);
+
     console.log('Database tables initialized successfully');
   } catch (error) {
     console.error('Error initializing database:', error);
