@@ -1,68 +1,45 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { classesApi, studentsApi } from '../services/api';
+import { classesApi } from '../services/api';
+import { useLoadStudents, useModal } from '../hooks';
 
 export const ClassDetail = () => {
   const { id } = useParams();
   const [classInfo, setClassInfo] = useState(null);
-  const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [editingStudent, setEditingStudent] = useState(null);
-  const [formData, setFormData] = useState({ name: '', student_no: '', gender: '' });
-  const [error, setError] = useState('');
+  const [classLoading, setClassLoading] = useState(true);
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef(null);
 
+  const { students, loading: studentsLoading, reload, addStudent, updateStudent, deleteStudent, importStudents } = useLoadStudents(id);
+  const modal = useModal({ name: '', student_no: '', gender: '' });
+
   useEffect(() => {
-    loadData();
+    const loadClassInfo = async () => {
+      try {
+        const data = await classesApi.get(id);
+        setClassInfo(data);
+      } catch (error) {
+        console.error('Failed to load class:', error);
+      } finally {
+        setClassLoading(false);
+      }
+    };
+    loadClassInfo();
   }, [id]);
-
-  const loadData = async () => {
-    try {
-      const [classData, studentsData] = await Promise.all([
-        classesApi.get(id),
-        studentsApi.getByClass(id),
-      ]);
-      setClassInfo(classData);
-      setStudents(studentsData);
-    } catch (error) {
-      console.error('Failed to load data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const openModal = (student = null) => {
-    if (student) {
-      setEditingStudent(student);
-      setFormData({
-        name: student.name,
-        student_no: student.student_no || '',
-        gender: student.gender || '',
-      });
-    } else {
-      setEditingStudent(null);
-      setFormData({ name: '', student_no: '', gender: '' });
-    }
-    setError('');
-    setShowModal(true);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    modal.setError('');
 
     try {
-      if (editingStudent) {
-        await studentsApi.update(editingStudent.id, formData);
+      if (modal.isEditing) {
+        await updateStudent(modal.editingItem.id, modal.formData);
       } else {
-        await studentsApi.add(id, formData);
+        await addStudent(modal.formData);
       }
-      setShowModal(false);
-      loadData();
+      modal.close();
     } catch (err) {
-      setError(err.message);
+      modal.setError(err.message);
     }
   };
 
@@ -70,8 +47,7 @@ export const ClassDetail = () => {
     if (!confirm('确定要删除这个学生吗？')) return;
 
     try {
-      await studentsApi.delete(studentId);
-      loadData();
+      await deleteStudent(studentId);
     } catch (error) {
       alert(error.message);
     }
@@ -88,9 +64,8 @@ export const ClassDetail = () => {
 
     setImporting(true);
     try {
-      const result = await studentsApi.import(id, file);
+      const result = await importStudents(file);
       alert(result.message);
-      loadData();
     } catch (error) {
       alert(error.message);
     } finally {
@@ -100,6 +75,16 @@ export const ClassDetail = () => {
       }
     }
   };
+
+  const openEditModal = (student) => {
+    modal.open(student, {
+      name: student.name,
+      student_no: student.student_no || '',
+      gender: student.gender || ''
+    });
+  };
+
+  const loading = classLoading || studentsLoading;
 
   if (loading) {
     return (
@@ -159,7 +144,7 @@ export const ClassDetail = () => {
             {importing ? '导入中...' : '导入Excel'}
           </button>
           <button
-            onClick={() => openModal()}
+            onClick={() => modal.open()}
             className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:opacity-90 font-medium shadow-lg shadow-purple-500/25"
           >
             添加学生
@@ -206,7 +191,7 @@ export const ClassDetail = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
-                        onClick={() => openModal(student)}
+                        onClick={() => openEditModal(student)}
                         className="text-purple-600 hover:text-purple-700 mr-4"
                       >
                         编辑
@@ -240,7 +225,7 @@ export const ClassDetail = () => {
                 导入Excel
               </button>
               <button
-                onClick={() => openModal()}
+                onClick={() => modal.open()}
                 className="inline-flex items-center px-5 py-2.5 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 shadow-lg shadow-purple-500/25"
               >
                 添加学生
@@ -261,16 +246,16 @@ export const ClassDetail = () => {
       </div>
 
       {/* Modal */}
-      {showModal && (
+      {modal.isOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-10 w-full max-w-md shadow-2xl">
             <h2 className="text-2xl font-bold text-gray-900 mb-8">
-              {editingStudent ? '编辑学生' : '添加学生'}
+              {modal.isEditing ? '编辑学生' : '添加学生'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
+              {modal.error && (
                 <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm">
-                  {error}
+                  {modal.error}
                 </div>
               )}
               <div>
@@ -279,8 +264,8 @@ export const ClassDetail = () => {
                   type="text"
                   required
                   className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  value={modal.formData.name}
+                  onChange={(e) => modal.updateField('name', e.target.value)}
                 />
               </div>
               <div>
@@ -288,16 +273,16 @@ export const ClassDetail = () => {
                 <input
                   type="text"
                   className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow"
-                  value={formData.student_no}
-                  onChange={(e) => setFormData({ ...formData, student_no: e.target.value })}
+                  value={modal.formData.student_no}
+                  onChange={(e) => modal.updateField('student_no', e.target.value)}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">性别</label>
                 <select
                   className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow bg-white"
-                  value={formData.gender}
-                  onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                  value={modal.formData.gender}
+                  onChange={(e) => modal.updateField('gender', e.target.value)}
                 >
                   <option value="">请选择</option>
                   <option value="男">男</option>
@@ -307,7 +292,7 @@ export const ClassDetail = () => {
               <div className="flex justify-end space-x-4 pt-6">
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => modal.close()}
                   className="px-5 py-2.5 border border-gray-200 rounded-xl text-gray-700 font-medium hover:bg-gray-50 transition-colors"
                 >
                   取消
@@ -316,7 +301,7 @@ export const ClassDetail = () => {
                   type="submit"
                   className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
                 >
-                  {editingStudent ? '保存' : '添加'}
+                  {modal.isEditing ? '保存' : '添加'}
                 </button>
               </div>
             </form>

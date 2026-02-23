@@ -134,3 +134,31 @@ export const membershipApi = {
   getStatus: () => request('/membership/status'),
   purchase: (data) => request('/membership/purchase', { method: 'POST', body: JSON.stringify(data) }),
 };
+
+// Exams API
+export const examsApi = {
+  getAll: (classId) => request(`/exams${classId ? `?class_id=${classId}` : ''}`),
+  get: (id) => request(`/exams/${id}`),
+  create: (data) => request('/exams', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id, data) => request(`/exams/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id) => request(`/exams/${id}`, { method: 'DELETE' }),
+  getScores: (examId) => request(`/exams/${examId}/scores`),
+  saveScores: (examId, scores) => request(`/exams/${examId}/scores`, { method: 'POST', body: JSON.stringify({ scores }) }),
+  getStats: (examId) => request(`/exams/${examId}/stats`),
+};
+
+// Reports API
+export const reportsApi = {
+  getComments: () => request('/reports/comments'),
+  getHistory: (classId) => request(`/reports/history?class_id=${classId}`),
+  preview: (data) => request('/reports/preview', { method: 'POST', body: JSON.stringify(data) }),
+  generate: (data) => request('/reports/generate', { method: 'POST', body: JSON.stringify(data) }),
+  generateBatch: (data) => request('/reports/batch', { method: 'POST', body: JSON.stringify(data) }),
+  delete: (id) => request(`/reports/${id}`, { method: 'DELETE' }),
+};
+
+// Seating API
+export const seatingApi = {
+  get: (classId) => request(`/seating/class/${classId}`),
+  save: (classId, data) => request(`/seating/class/${classId}`, { method: 'POST', body: JSON.stringify(data) }),
+};

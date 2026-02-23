@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { initDb } from './db/index.js';
+import { errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.js';
 import classRoutes from './routes/classes.js';
 import studentRoutes from './routes/students.js';
@@ -10,6 +11,11 @@ import scoreRoutes from './routes/scores.js';
 import assignmentRoutes from './routes/assignments.js';
 import redemptionRoutes from './routes/redemption.js';
 import membershipRoutes from './routes/membership.js';
+import dashboardRoutes from './routes/dashboard.js';
+import exportRoutes from './routes/export.js';
+import seatingRoutes from './routes/seating.js';
+import examRoutes from './routes/exams.js';
+import reportRoutes from './routes/reports.js';
 
 dotenv.config();
 
@@ -29,17 +35,19 @@ app.use('/api/scores', scoreRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/redemption', redemptionRoutes);
 app.use('/api/membership', membershipRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/export', exportRoutes);
+app.use('/api/seating', seatingRoutes);
+app.use('/api/exams', examRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Error handling
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: '服务器内部错误' });
-});
+// Global error handling
+app.use(errorHandler);
 
 // Initialize database and start server
 const startServer = async () => {

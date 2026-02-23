@@ -1,57 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { classesApi } from '../services/api';
+import { useLoadClasses, useModal } from '../hooks';
 
 export const Classes = () => {
-  const [classes, setClasses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [editingClass, setEditingClass] = useState(null);
-  const [formData, setFormData] = useState({ name: '', grade: '', subject: '' });
-  const [error, setError] = useState('');
+  const { classes, activeClasses, archivedClasses, loading, reload } = useLoadClasses();
   const [showArchived, setShowArchived] = useState(false);
 
-  useEffect(() => {
-    loadClasses();
-  }, []);
-
-  const loadClasses = async () => {
-    try {
-      const data = await classesApi.getAll();
-      setClasses(data);
-    } catch (error) {
-      console.error('Failed to load classes:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const openModal = (cls = null) => {
-    if (cls) {
-      setEditingClass(cls);
-      setFormData({ name: cls.name, grade: cls.grade || '', subject: cls.subject || '' });
-    } else {
-      setEditingClass(null);
-      setFormData({ name: '', grade: '', subject: '' });
-    }
-    setError('');
-    setShowModal(true);
-  };
+  const modal = useModal({ name: '', grade: '', subject: '' });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    modal.setError('');
 
     try {
-      if (editingClass) {
-        await classesApi.update(editingClass.id, formData);
+      if (modal.isEditing) {
+        await classesApi.update(modal.editingItem.id, modal.formData);
       } else {
-        await classesApi.create(formData);
+        await classesApi.create(modal.formData);
       }
-      setShowModal(false);
-      loadClasses();
+      modal.close();
+      reload();
     } catch (err) {
-      setError(err.message);
+      modal.setError(err.message);
     }
   };
 
@@ -60,7 +31,7 @@ export const Classes = () => {
 
     try {
       await classesApi.delete(id);
-      loadClasses();
+      reload();
     } catch (error) {
       alert(error.message);
     }
@@ -72,17 +43,23 @@ export const Classes = () => {
 
     try {
       await classesApi.archive(cls.id);
-      loadClasses();
+      reload();
     } catch (error) {
       alert(error.message);
     }
   };
 
+  const openEditModal = (cls) => {
+    modal.open(cls, {
+      name: cls.name,
+      grade: cls.grade || '',
+      subject: cls.subject || ''
+    });
+  };
+
   const grades = ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级', '初一', '初二', '初三', '高一', '高二', '高三'];
   const subjects = ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '地理', '政治', '音乐', '美术', '体育', '信息技术', '其他'];
 
-  const activeClasses = classes.filter(c => c.status !== 'archived');
-  const archivedClasses = classes.filter(c => c.status === 'archived');
   const displayClasses = showArchived ? archivedClasses : activeClasses;
 
   return (
@@ -113,7 +90,7 @@ export const Classes = () => {
             </button>
           </div>
           <button
-            onClick={() => openModal()}
+            onClick={() => modal.open()}
             className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg shadow-purple-500/25"
           >
             创建班级
@@ -157,7 +134,7 @@ export const Classes = () => {
                   </div>
                   <div className="flex space-x-1">
                     <button
-                      onClick={() => openModal(cls)}
+                      onClick={() => openEditModal(cls)}
                       className="p-2 rounded-lg text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-colors"
                       title="编辑"
                     >
@@ -229,7 +206,7 @@ export const Classes = () => {
           {!showArchived && (
             <div className="mt-8">
               <button
-                onClick={() => openModal()}
+                onClick={() => modal.open()}
                 className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-purple-500/25"
               >
                 创建班级
@@ -240,16 +217,16 @@ export const Classes = () => {
       )}
 
       {/* Modal */}
-      {showModal && (
+      {modal.isOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-10 w-full max-w-md shadow-2xl">
             <h2 className="text-2xl font-bold text-gray-900 mb-8">
-              {editingClass ? '编辑班级' : '创建班级'}
+              {modal.isEditing ? '编辑班级' : '创建班级'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
+              {modal.error && (
                 <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm">
-                  {error}
+                  {modal.error}
                 </div>
               )}
               <div>
@@ -258,8 +235,8 @@ export const Classes = () => {
                   type="text"
                   required
                   className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  value={modal.formData.name}
+                  onChange={(e) => modal.updateField('name', e.target.value)}
                   placeholder="例如：三年级1班"
                 />
               </div>
@@ -267,8 +244,8 @@ export const Classes = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">年级</label>
                 <select
                   className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow bg-white"
-                  value={formData.grade}
-                  onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+                  value={modal.formData.grade}
+                  onChange={(e) => modal.updateField('grade', e.target.value)}
                 >
                   <option value="">请选择年级</option>
                   {grades.map((g) => (
@@ -280,8 +257,8 @@ export const Classes = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">学科</label>
                 <select
                   className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow bg-white"
-                  value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                  value={modal.formData.subject}
+                  onChange={(e) => modal.updateField('subject', e.target.value)}
                 >
                   <option value="">请选择学科</option>
                   {subjects.map((s) => (
@@ -292,7 +269,7 @@ export const Classes = () => {
               <div className="flex justify-end space-x-4 pt-6">
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => modal.close()}
                   className="px-5 py-2.5 border border-gray-200 rounded-xl text-gray-700 font-medium hover:bg-gray-50 transition-colors"
                 >
                   取消
@@ -301,7 +278,7 @@ export const Classes = () => {
                   type="submit"
                   className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
                 >
-                  {editingClass ? '保存' : '创建'}
+                  {modal.isEditing ? '保存' : '创建'}
                 </button>
               </div>
             </form>
