@@ -19,6 +19,18 @@ import { Groups } from './pages/Groups';
 import { SeatingChart } from './pages/SeatingChart';
 import Redemption from './pages/Redemption';
 import Membership from './pages/Membership';
+import { DataDashboard } from './pages/DataDashboard';
+import { StudentDashboard } from './pages/StudentDashboard';
+import { DataExport } from './pages/DataExport';
+import { ExamManagement } from './pages/ExamManagement';
+import { ParentReports } from './pages/ParentReports';
+import { Courses } from './pages/Courses';
+import { CourseEditor } from './pages/CourseEditor';
+import { CoursePlayer } from './pages/CoursePlayer';
+import { CourseViewer } from './pages/CourseViewer';
+import { Videos } from './pages/Videos';
+import { VideoPlayer } from './pages/VideoPlayer';
+import { VideoViewer } from './pages/VideoViewer';
 import './index.css';
 
 function App() {
@@ -35,6 +47,12 @@ function App() {
 
           {/* Student submission page (no auth required) */}
           <Route path="/submit/:code" element={<StudentSubmit />} />
+
+          {/* Course viewer (no auth required, accessed via share code) */}
+          <Route path="/learn/:code" element={<CourseViewer />} />
+
+          {/* Video viewer (no auth required, accessed via share code) */}
+          <Route path="/video/:code" element={<VideoViewer />} />
 
           {/* Protected routes */}
           <Route
@@ -58,6 +76,16 @@ function App() {
             <Route path="seating" element={<SeatingChart />} />
             <Route path="redemption/:classId" element={<Redemption />} />
             <Route path="membership" element={<Membership />} />
+            <Route path="data" element={<DataDashboard />} />
+            <Route path="student/:studentId" element={<StudentDashboard />} />
+            <Route path="export" element={<DataExport />} />
+            <Route path="exams" element={<ExamManagement />} />
+            <Route path="reports" element={<ParentReports />} />
+            <Route path="courses" element={<Courses />} />
+            <Route path="courses/:id/play" element={<CoursePlayer />} />
+            <Route path="courses/:id/edit" element={<CourseEditor />} />
+            <Route path="videos" element={<Videos />} />
+            <Route path="videos/:id/play" element={<VideoPlayer />} />
           </Route>
         </Routes>
       </BrowserRouter>

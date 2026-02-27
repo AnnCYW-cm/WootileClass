@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>比较大小</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', 'Microsoft YaHei', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 850px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            padding: 35px 40px;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .symbols-intro {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .symbols-intro.show {
+            opacity: 1;
+        }
+
+        .symbol-card {
+            text-align: center;
+            padding: 15px 25px;
+            background: linear-gradient(145deg, #f8f9ff, #eef1f5);
+            border-radius: 16px;
+        }
+
+        .symbol-card .symbol {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .symbol-card .desc {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .message {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            min-height: 32px;
+        }
+
+        .demo-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .compare-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            padding: 25px 40px;
+            background: linear-gradient(145deg, #f0f4ff, #e0e5f0);
+            border-radius: 24px;
+        }
+
+        .number-side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .number-display {
+            font-size: 48px;
+            font-weight: 800;
+            color: #2c3e50;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.5s ease;
+        }
+
+        .number-display.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .number-display.left {
+            color: #4facfe;
+        }
+
+        .number-display.right {
+            color: #fa709a;
+        }
+
+        .items-row {
+            display: flex;
+            gap: 8px;
+            min-height: 50px;
+        }
+
+        .item {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .item.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .item.blue {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .item.pink {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .compare-symbol {
+            font-size: 72px;
+            font-weight: 800;
+            color: #667eea;
+            opacity: 0;
+            transform: scale(0) rotate(-180deg);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .compare-symbol.show {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        .compare-symbol.greater {
+            color: #e74c3c;
+        }
+
+        .compare-symbol.less {
+            color: #3498db;
+        }
+
+        .compare-symbol.equal {
+            color: #27ae60;
+        }
+
+        .explanation {
+            text-align: center;
+            font-size: 18px;
+            color: #667eea;
+            padding: 18px 25px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 16px;
+            border-left: 5px solid #667eea;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .explanation.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pause-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 90px;
+            height: 90px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .pause-indicator.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .pause-indicator svg {
+            width: 36px;
+            height: 36px;
+            fill: white;
+        }
+
+        .crocodile-tip {
+            font-size: 16px;
+            color: #9b59b6;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .crocodile-tip.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="pause-indicator" id="pauseIndicator">
+        <svg viewBox="0 0 24 24" id="pauseIcon">
+            <polygon points="5,3 19,12 5,21" />
+        </svg>
+    </div>
+
+    <div class="app-container">
+        <h1>比较大小</h1>
+        <p class="subtitle">认识 大于、小于、等于 符号</p>
+
+        <div class="symbols-intro" id="symbolsIntro">
+            <div class="symbol-card">
+                <div class="symbol">&gt;</div>
+                <div class="desc">大于</div>
+            </div>
+            <div class="symbol-card">
+                <div class="symbol">&lt;</div>
+                <div class="desc">小于</div>
+            </div>
+            <div class="symbol-card">
+                <div class="symbol">=</div>
+                <div class="desc">等于</div>
+            </div>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <div class="demo-area">
+            <div class="compare-container">
+                <div class="number-side">
+                    <div class="number-display left" id="leftNum">5</div>
+                    <div class="items-row" id="leftItems"></div>
+                </div>
+
+                <div class="compare-symbol" id="compareSymbol">&gt;</div>
+
+                <div class="number-side">
+                    <div class="number-display right" id="rightNum">3</div>
+                    <div class="items-row" id="rightItems"></div>
+                </div>
+            </div>
+
+            <div class="crocodile-tip" id="tip">
+                记忆口诀：开口朝大数，尖尖对小数
+            </div>
+        </div>
+
+        <div class="explanation" id="explanation">
+            比较两个数的大小时，数一数各有多少，多的就大
+        </div>
+    </div>
+
+    <script>
+        const message = document.getElementById('message');
+        const symbolsIntro = document.getElementById('symbolsIntro');
+        const leftNum = document.getElementById('leftNum');
+        const rightNum = document.getElementById('rightNum');
+        const leftItems = document.getElementById('leftItems');
+        const rightItems = document.getElementById('rightItems');
+        const compareSymbol = document.getElementById('compareSymbol');
+        const tip = document.getElementById('tip');
+        const explanation = document.getElementById('explanation');
+        const pauseIndicator = document.getElementById('pauseIndicator');
+
+        let isPaused = false;
+        let currentResolve = null;
+        let remainingTime = 0;
+        let startTime = 0;
+        let currentTimeout = null;
+
+        document.body.addEventListener('click', () => {
+            isPaused = !isPaused;
+            if (isPaused) {
+                if (currentTimeout) {
+                    clearTimeout(currentTimeout);
+                    remainingTime = Math.max(0, remainingTime - (Date.now() - startTime));
+                }
+                pauseIndicator.classList.add('show');
+            } else {
+                pauseIndicator.classList.remove('show');
+                if (currentResolve && remainingTime >= 0) {
+                    startTime = Date.now();
+                    currentTimeout = setTimeout(() => {
+                        if (currentResolve) { currentResolve(); currentResolve = null; }
+                    }, remainingTime);
+                }
+            }
+        });
+
+        function sleep(ms) {
+            return new Promise(resolve => {
+                currentResolve = resolve;
+                remainingTime = ms;
+                if (!isPaused) {
+                    startTime = Date.now();
+                    currentTimeout = setTimeout(() => { currentResolve = null; resolve(); }, ms);
+                }
+            });
+        }
+
+        function createItems(container, count, color) {
+            container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const item = document.createElement('div');
+                item.className = `item ${color}`;
+                item.textContent = '⭐';
+                item.style.transitionDelay = `${i * 80}ms`;
+                container.appendChild(item);
+            }
+        }
+
+        function showItems(container) {
+            container.querySelectorAll('.item').forEach(item => item.classList.add('show'));
+        }
+
+        function resetAll() {
+            symbolsIntro.classList.remove('show');
+            leftNum.classList.remove('show');
+            rightNum.classList.remove('show');
+            compareSymbol.classList.remove('show', 'greater', 'less', 'equal');
+            tip.classList.remove('show');
+            explanation.classList.remove('show');
+            leftItems.innerHTML = '';
+            rightItems.innerHTML = '';
+            message.textContent = '';
+        }
+
+        async function showComparison(left, right, symbol, symbolClass, desc) {
+            // 显示数字
+            leftNum.textContent = left;
+            rightNum.textContent = right;
+            leftNum.classList.add('show');
+            rightNum.classList.add('show');
+            message.textContent = `比较 ${left} 和 ${right}`;
+            await sleep(800);
+
+            // 显示物品
+            createItems(leftItems, left, 'blue');
+            await sleep(100);
+            showItems(leftItems);
+            await sleep(400);
+
+            createItems(rightItems, right, 'pink');
+            await sleep(100);
+            showItems(rightItems);
+            await sleep(1000);
+
+            // 显示比较符号
+            compareSymbol.textContent = symbol;
+            compareSymbol.classList.add('show', symbolClass);
+            message.textContent = `${left} ${symbol} ${right}，${desc}`;
+            await sleep(2000);
+
+            // 清理
+            leftNum.classList.remove('show');
+            rightNum.classList.remove('show');
+            compareSymbol.classList.remove('show', 'greater', 'less', 'equal');
+            leftItems.innerHTML = '';
+            rightItems.innerHTML = '';
+        }
+
+        async function animate() {
+            resetAll();
+            await sleep(500);
+
+            // 显示符号介绍
+            symbolsIntro.classList.add('show');
+            message.textContent = '认识三个比较符号';
+            await sleep(2000);
+
+            // 示例1: 5 > 3
+            await showComparison(5, 3, '>', 'greater', '5 大于 3');
+
+            // 示例2: 2 < 6
+            await showComparison(2, 6, '<', 'less', '2 小于 6');
+
+            // 示例3: 4 = 4
+            await showComparison(4, 4, '=', 'equal', '4 等于 4');
+
+            // 显示口诀
+            tip.classList.add('show');
+            message.textContent = '记住口诀，比较大小很简单！';
+            await sleep(2000);
+
+            // 显示总结
+            explanation.classList.add('show');
+            await sleep(3000);
+
+            animate();
+        }
+
+        animate();
+    </script>
+</body>
+</html>

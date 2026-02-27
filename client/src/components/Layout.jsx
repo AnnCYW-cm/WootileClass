@@ -82,7 +82,10 @@ export const PublicLayout = () => {
 export const DashboardLayout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [showTeachingMenu, setShowTeachingMenu] = useState(false);
+  const [showResourceMenu, setShowResourceMenu] = useState(false);
   const [showToolsMenu, setShowToolsMenu] = useState(false);
+  const [showDataMenu, setShowDataMenu] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -92,8 +95,8 @@ export const DashboardLayout = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <nav className="bg-white/80 backdrop-blur-xl border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex justify-between h-16">
+        <div className="px-8">
+          <div className="flex justify-between h-20">
             <div className="flex items-center space-x-8">
               <Link to="/dashboard" className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
@@ -116,25 +119,47 @@ export const DashboardLayout = () => {
                 >
                   班级管理
                 </Link>
-                <Link
-                  to="/dashboard/rollcall"
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors"
-                >
-                  点名系统
-                </Link>
-                <Link
-                  to="/dashboard/scores"
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors"
-                >
-                  学生积分
-                </Link>
-                <Link
-                  to="/dashboard/assignments"
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors"
-                >
-                  作业管理
-                </Link>
-                {/* Classroom Tools Dropdown */}
+                {/* 教学管理 Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowTeachingMenu(!showTeachingMenu)}
+                    onBlur={() => setTimeout(() => setShowTeachingMenu(false), 200)}
+                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors flex items-center"
+                  >
+                    教学管理
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {showTeachingMenu && (
+                    <div className="absolute left-0 mt-2 w-40 bg-white rounded-xl shadow-lg py-2 z-50 border border-gray-100">
+                      <Link to="/dashboard/rollcall" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">点名系统</Link>
+                      <Link to="/dashboard/scores" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">学生积分</Link>
+                      <Link to="/dashboard/assignments" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">作业管理</Link>
+                      <Link to="/dashboard/exams" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">成绩管理</Link>
+                    </div>
+                  )}
+                </div>
+                {/* 教学资源 Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowResourceMenu(!showResourceMenu)}
+                    onBlur={() => setTimeout(() => setShowResourceMenu(false), 200)}
+                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors flex items-center"
+                  >
+                    教学资源
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {showResourceMenu && (
+                    <div className="absolute left-0 mt-2 w-40 bg-white rounded-xl shadow-lg py-2 z-50 border border-gray-100">
+                      <Link to="/dashboard/courses" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">课程动画</Link>
+                      <Link to="/dashboard/videos" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">视频课程</Link>
+                    </div>
+                  )}
+                </div>
+                {/* 课堂工具 Dropdown */}
                 <div className="relative">
                   <button
                     onClick={() => setShowToolsMenu(!showToolsMenu)}
@@ -148,47 +173,47 @@ export const DashboardLayout = () => {
                   </button>
                   {showToolsMenu && (
                     <div className="absolute left-0 mt-2 w-44 bg-white rounded-xl shadow-lg py-2 z-50 border border-gray-100">
-                      <Link
-                        to="/dashboard/tools"
-                        className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors"
-                      >
-                        计时器/噪音监测
-                      </Link>
-                      <Link
-                        to="/dashboard/groups"
-                        className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors"
-                      >
-                        分组工具
-                      </Link>
-                      <Link
-                        to="/dashboard/seating"
-                        className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors"
-                      >
-                        座位表
-                      </Link>
+                      <Link to="/dashboard/tools" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">计时器/噪音监测</Link>
+                      <Link to="/dashboard/groups" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">分组工具</Link>
+                      <Link to="/dashboard/seating" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">座位表</Link>
                     </div>
                   )}
                 </div>
-                <Link
-                  to="/dashboard/statistics"
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors"
-                >
-                  数据统计
-                </Link>
+                {/* 数据报表 Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowDataMenu(!showDataMenu)}
+                    onBlur={() => setTimeout(() => setShowDataMenu(false), 200)}
+                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors flex items-center"
+                  >
+                    数据报表
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {showDataMenu && (
+                    <div className="absolute left-0 mt-2 w-40 bg-white rounded-xl shadow-lg py-2 z-50 border border-gray-100">
+                      <Link to="/dashboard/data" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">数据看板</Link>
+                      <Link to="/dashboard/export" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">数据导出</Link>
+                      <Link to="/dashboard/reports" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">家长报告</Link>
+                      <Link to="/dashboard/statistics" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">数据统计</Link>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-8">
               <Link
                 to="/dashboard/membership"
-                className="px-4 py-1.5 bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-1.5 shadow-sm"
+                className="px-6 py-2.5 bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-full text-base font-medium hover:opacity-90 transition-opacity flex items-center gap-2.5 shadow-sm"
               >
                 <span>👑</span>
                 会员
               </Link>
-              <span className="text-gray-500 text-sm">{user?.name || user?.email}</span>
+              <span className="text-gray-600 text-base font-medium">{user?.name || user?.email}</span>
               <button
                 onClick={handleLogout}
-                className="text-gray-400 hover:text-red-500 text-sm transition-colors"
+                className="text-gray-400 hover:text-red-500 text-base font-medium transition-colors"
               >
                 退出
               </button>

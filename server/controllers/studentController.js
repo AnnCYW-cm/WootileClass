@@ -1,4 +1,5 @@
 import { StudentService } from '../services/StudentService.js';
+import { MembershipService } from '../services/MembershipService.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { BadRequestError } from '../utils/errors.js';
 
@@ -15,6 +16,18 @@ export const getStudents = asyncHandler(async (req, res) => {
 
 export const addStudent = asyncHandler(async (req, res) => {
   const { classId } = req.params;
+
+  // 检查学生数量限制
+  const limitCheck = await MembershipService.checkStudentLimit(req.userId, classId);
+  if (!limitCheck.allowed) {
+    return res.status(403).json({
+      error: limitCheck.message,
+      code: 'LIMIT_EXCEEDED',
+      current: limitCheck.current,
+      limit: limitCheck.limit
+    });
+  }
+
   const student = await StudentService.create(classId, req.userId, req.body);
   res.status(201).json(student);
 });

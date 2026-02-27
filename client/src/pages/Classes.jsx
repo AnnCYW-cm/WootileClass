@@ -1,13 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { classesApi } from '../services/api';
+import { classesApi, membershipApi } from '../services/api';
 import { useLoadClasses, useModal } from '../hooks';
 
 export const Classes = () => {
   const { classes, activeClasses, archivedClasses, loading, reload } = useLoadClasses();
   const [showArchived, setShowArchived] = useState(false);
+  const [usageStats, setUsageStats] = useState(null);
 
   const modal = useModal({ name: '', grade: '', subject: '' });
+
+  // 获取使用量统计
+  useEffect(() => {
+    membershipApi.getUsage().then(setUsageStats).catch(console.error);
+  }, [classes]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,8 +27,14 @@ export const Classes = () => {
       }
       modal.close();
       reload();
+      // 刷新使用量统计
+      membershipApi.getUsage().then(setUsageStats).catch(console.error);
     } catch (err) {
-      modal.setError(err.message);
+      if (err.code === 'LIMIT_EXCEEDED') {
+        modal.setError(`${err.message}（当前：${err.current}/${err.limit}）`);
+      } else {
+        modal.setError(err.message);
+      }
     }
   };
 
@@ -97,6 +109,57 @@ export const Classes = () => {
           </button>
         </div>
       </div>
+
+      {/* 使用量提示 */}
+      {usageStats && !usageStats.usage?.classes?.unlimited && (
+        <div className={`p-4 rounded-xl flex items-center justify-between ${
+          usageStats.usage.classes.current >= usageStats.usage.classes.limit
+            ? 'bg-amber-50 border border-amber-200'
+            : 'bg-purple-50 border border-purple-100'
+        }`}>
+          <div className="flex items-center space-x-3">
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+              usageStats.usage.classes.current >= usageStats.usage.classes.limit
+                ? 'bg-amber-100'
+                : 'bg-purple-100'
+            }`}>
+              <svg className={`w-5 h-5 ${
+                usageStats.usage.classes.current >= usageStats.usage.classes.limit
+                  ? 'text-amber-600'
+                  : 'text-purple-600'
+              }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+            </div>
+            <div>
+              <p className={`text-sm font-medium ${
+                usageStats.usage.classes.current >= usageStats.usage.classes.limit
+                  ? 'text-amber-800'
+                  : 'text-purple-800'
+              }`}>
+                {usageStats.usage.classes.current >= usageStats.usage.classes.limit
+                  ? `已创建 ${usageStats.usage.classes.current} 个班级，免费版上限 ${usageStats.usage.classes.limit} 个`
+                  : `已创建 ${usageStats.usage.classes.current} 个班级，还可创建 ${usageStats.usage.classes.limit - usageStats.usage.classes.current} 个`
+                }
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                {usageStats.isPremium ? '会员版' : '免费版'}
+                {usageStats.usage.classes.current >= usageStats.usage.classes.limit
+                  ? ' · 升级会员解锁无限班级'
+                  : ''}
+              </p>
+            </div>
+          </div>
+          {!usageStats.isPremium && (
+            <Link
+              to="/dashboard/membership"
+              className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
+            >
+              升级会员
+            </Link>
+          )}
+        </div>
+      )}
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

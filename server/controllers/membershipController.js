@@ -1,4 +1,6 @@
 import { query } from '../db/index.js';
+import { MembershipService } from '../services/MembershipService.js';
+import { MEMBERSHIP_PLANS as PLANS_CONFIG, MEMBERSHIP_LIMITS } from '../config/membershipLimits.js';
 
 // Membership plans configuration
 const MEMBERSHIP_PLANS = {
@@ -136,5 +138,46 @@ export const checkPremiumAccess = async (req, res, next) => {
   } catch (error) {
     console.error('Check premium access error:', error);
     res.status(500).json({ error: '检查会员状态失败' });
+  }
+};
+
+// Get user's usage statistics and limits
+export const getUsageStats = async (req, res) => {
+  try {
+    const stats = await MembershipService.getUsageStats(req.userId);
+
+    // 获取会员到期时间
+    const userResult = await query(
+      'SELECT membership_expires_at FROM users WHERE id = $1',
+      [req.userId]
+    );
+    const user = userResult.rows[0];
+
+    res.json({
+      ...stats,
+      expiresAt: user?.membership_expires_at,
+      daysRemaining: stats.isPremium && user?.membership_expires_at
+        ? Math.ceil((new Date(user.membership_expires_at) - new Date()) / (1000 * 60 * 60 * 24))
+        : null
+    });
+  } catch (error) {
+    console.error('Get usage stats error:', error);
+    res.status(500).json({ error: '获取使用统计失败' });
+  }
+};
+
+// Get membership plans with pricing
+export const getMembershipPlans = async (req, res) => {
+  try {
+    res.json({
+      plans: PLANS_CONFIG,
+      limits: {
+        free: MEMBERSHIP_LIMITS.free,
+        premium: MEMBERSHIP_LIMITS.premium
+      }
+    });
+  } catch (error) {
+    console.error('Get membership plans error:', error);
+    res.status(500).json({ error: '获取会员方案失败' });
   }
 };

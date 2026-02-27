@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加法交换律演示</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', 'Microsoft YaHei', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 850px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            padding: 35px 40px;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .formula-display {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            min-height: 40px;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .formula-display.show {
+            opacity: 1;
+        }
+
+        .formula-display span {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            margin: 0 3px;
+        }
+
+        .visualization {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .equation-side {
+            flex: 1;
+            max-width: 320px;
+            background: linear-gradient(145deg, #f8f9ff, #eef1f5);
+            border-radius: 20px;
+            padding: 25px 20px;
+            text-align: center;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .equation-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 20px;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .equation-label.show {
+            opacity: 1;
+        }
+
+        .blocks-row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+            min-height: 55px;
+        }
+
+        .block {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            opacity: 0;
+            transform: scale(0.5) translateY(-20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .block.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .block.block-a {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .block.block-b {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .sum-display {
+            font-size: 26px;
+            font-weight: 700;
+            color: #27ae60;
+            margin-top: 15px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+
+        .sum-display.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .equals-sign {
+            font-size: 50px;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            padding-top: 60px;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .equals-sign.show {
+            opacity: 1;
+        }
+
+        .conclusion {
+            text-align: center;
+            padding: 20px 30px;
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(39, 174, 96, 0.1) 100%);
+            border-radius: 16px;
+            border-left: 5px solid #27ae60;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .conclusion.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .conclusion h3 {
+            font-size: 22px;
+            color: #27ae60;
+            margin-bottom: 8px;
+        }
+
+        .conclusion p {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+
+        .highlight {
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+            100% { transform: scale(1.08); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); }
+        }
+
+        /* 暂停指示器 */
+        .pause-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 90px;
+            height: 90px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+            pointer-events: none;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+
+        .pause-indicator.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .pause-indicator svg {
+            width: 36px;
+            height: 36px;
+            fill: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="pause-indicator" id="pauseIndicator">
+        <svg viewBox="0 0 24 24" id="pauseIcon">
+            <polygon points="5,3 19,12 5,21" />
+        </svg>
+    </div>
+
+    <div class="app-container">
+        <h1>加法交换律</h1>
+        <p class="subtitle">交换加数的位置，和不变</p>
+
+        <div class="formula-display" id="formulaDisplay">
+            <span>3</span> + <span>5</span> = <span>5</span> + <span>3</span>
+        </div>
+
+        <div class="visualization">
+            <div class="equation-side">
+                <div class="equation-label" id="leftLabel">3 + 5</div>
+                <div class="blocks-row" id="leftRowA"></div>
+                <div class="blocks-row" id="leftRowB"></div>
+                <div class="sum-display" id="leftSum">= 8</div>
+            </div>
+
+            <div class="equals-sign" id="equalsSign">=</div>
+
+            <div class="equation-side">
+                <div class="equation-label" id="rightLabel">5 + 3</div>
+                <div class="blocks-row" id="rightRowB"></div>
+                <div class="blocks-row" id="rightRowA"></div>
+                <div class="sum-display" id="rightSum">= 8</div>
+            </div>
+        </div>
+
+        <div class="conclusion" id="conclusion">
+            <h3>✨ 结论：a + b = b + a</h3>
+            <p>无论加数的顺序如何变化，它们的和始终相等！</p>
+        </div>
+    </div>
+
+    <script>
+        const valueA = 3;
+        const valueB = 5;
+
+        const formulaDisplay = document.getElementById('formulaDisplay');
+        const leftLabel = document.getElementById('leftLabel');
+        const rightLabel = document.getElementById('rightLabel');
+        const leftRowA = document.getElementById('leftRowA');
+        const leftRowB = document.getElementById('leftRowB');
+        const rightRowA = document.getElementById('rightRowA');
+        const rightRowB = document.getElementById('rightRowB');
+        const leftSum = document.getElementById('leftSum');
+        const rightSum = document.getElementById('rightSum');
+        const equalsSign = document.getElementById('equalsSign');
+        const conclusion = document.getElementById('conclusion');
+        const pauseIndicator = document.getElementById('pauseIndicator');
+        const pauseIcon = document.getElementById('pauseIcon');
+
+        let isPaused = false;
+        let currentResolve = null;
+        let remainingTime = 0;
+        let startTime = 0;
+        let currentTimeout = null;
+
+        // 点击暂停/继续
+        document.body.addEventListener('click', () => {
+            isPaused = !isPaused;
+
+            if (isPaused) {
+                if (currentTimeout) {
+                    clearTimeout(currentTimeout);
+                    remainingTime = Math.max(0, remainingTime - (Date.now() - startTime));
+                }
+                pauseIcon.innerHTML = '<polygon points="5,3 19,12 5,21" />';
+                pauseIndicator.classList.add('show');
+            } else {
+                pauseIndicator.classList.remove('show');
+                if (currentResolve && remainingTime >= 0) {
+                    startTime = Date.now();
+                    currentTimeout = setTimeout(() => {
+                        if (currentResolve) {
+                            currentResolve();
+                            currentResolve = null;
+                        }
+                    }, remainingTime);
+                }
+            }
+        });
+
+        function sleep(ms) {
+            return new Promise(resolve => {
+                if (isPaused) {
+                    currentResolve = resolve;
+                    remainingTime = ms;
+                } else {
+                    currentResolve = resolve;
+                    remainingTime = ms;
+                    startTime = Date.now();
+                    currentTimeout = setTimeout(() => {
+                        currentResolve = null;
+                        resolve();
+                    }, ms);
+                }
+            });
+        }
+
+        function createBlocks(container, count, type) {
+            container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const block = document.createElement('div');
+                block.className = `block block-${type}`;
+                block.textContent = type.toUpperCase();
+                block.style.transitionDelay = `${i * 80}ms`;
+                container.appendChild(block);
+            }
+        }
+
+        function showBlocks(container) {
+            const blocks = container.querySelectorAll('.block');
+            blocks.forEach(block => block.classList.add('show'));
+        }
+
+        function highlightBlocks(container) {
+            const blocks = container.querySelectorAll('.block');
+            blocks.forEach(block => block.classList.add('highlight'));
+        }
+
+        function resetAll() {
+            formulaDisplay.classList.remove('show');
+            leftLabel.classList.remove('show');
+            rightLabel.classList.remove('show');
+            leftSum.classList.remove('show');
+            rightSum.classList.remove('show');
+            equalsSign.classList.remove('show');
+            conclusion.classList.remove('show');
+
+            leftRowA.innerHTML = '';
+            leftRowB.innerHTML = '';
+            rightRowA.innerHTML = '';
+            rightRowB.innerHTML = '';
+        }
+
+        async function animate() {
+            resetAll();
+            await sleep(500);
+
+            // 显示公式
+            formulaDisplay.classList.add('show');
+            await sleep(1000);
+
+            // 显示左侧标签
+            leftLabel.classList.add('show');
+            await sleep(500);
+
+            // 创建并显示左侧 A 方块
+            createBlocks(leftRowA, valueA, 'a');
+            await sleep(100);
+            showBlocks(leftRowA);
+            await sleep(800);
+
+            // 创建并显示左侧 B 方块
+            createBlocks(leftRowB, valueB, 'b');
+            await sleep(100);
+            showBlocks(leftRowB);
+            await sleep(800);
+
+            // 显示左侧总和
+            leftSum.classList.add('show');
+            highlightBlocks(leftRowA);
+            highlightBlocks(leftRowB);
+            await sleep(1200);
+
+            // 显示等号
+            equalsSign.classList.add('show');
+            await sleep(500);
+
+            // 显示右侧标签
+            rightLabel.classList.add('show');
+            await sleep(500);
+
+            // 创建并显示右侧 B 方块（顺序交换）
+            createBlocks(rightRowB, valueB, 'b');
+            await sleep(100);
+            showBlocks(rightRowB);
+            await sleep(800);
+
+            // 创建并显示右侧 A 方块
+            createBlocks(rightRowA, valueA, 'a');
+            await sleep(100);
+            showBlocks(rightRowA);
+            await sleep(800);
+
+            // 显示右侧总和
+            rightSum.classList.add('show');
+            highlightBlocks(rightRowB);
+            highlightBlocks(rightRowA);
+            await sleep(1500);
+
+            // 显示结论
+            conclusion.classList.add('show');
+            await sleep(4000);
+
+            // 循环
+            animate();
+        }
+
+        animate();
+    </script>
+</body>
+</html>

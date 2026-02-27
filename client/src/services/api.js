@@ -1,4 +1,6 @@
 const API_BASE = '/api';
+// 直接连接后端，用于大文件上传（绕过 Vite 代理以支持进度显示）
+const UPLOAD_BASE = import.meta.env.DEV ? 'http://localhost:3001/api' : '/api';
 
 const getToken = () => localStorage.getItem('token');
 
@@ -18,7 +20,15 @@ const request = async (endpoint, options = {}) => {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || '请求失败');
+    // 创建包含更多信息的错误对象
+    const error = new Error(data.error || '请求失败');
+    error.code = data.code;
+    error.status = response.status;
+    error.current = data.current;
+    error.limit = data.limit;
+    error.remaining = data.remaining;
+    error.needed = data.needed;
+    throw error;
   }
 
   return data;
@@ -131,7 +141,9 @@ export const redemptionApi = {
 // Membership API
 export const membershipApi = {
   getPlans: () => request('/membership/plans'),
+  getPlansDetail: () => request('/membership/plans-detail'),  // 获取详细方案和限制
   getStatus: () => request('/membership/status'),
+  getUsage: () => request('/membership/usage'),  // 获取使用量统计
   purchase: (data) => request('/membership/purchase', { method: 'POST', body: JSON.stringify(data) }),
 };
 
@@ -161,4 +173,128 @@ export const reportsApi = {
 export const seatingApi = {
   get: (classId) => request(`/seating/class/${classId}`),
   save: (classId, data) => request(`/seating/class/${classId}`, { method: 'POST', body: JSON.stringify(data) }),
+};
+
+// Courses API
+export const coursesApi = {
+  getAll: (status) => request(`/courses${status ? `?status=${status}` : ''}`),
+  getById: (id) => request(`/courses/${id}`),
+  getByShareCode: (code) => request(`/courses/share/${code}`),
+  create: (data) => request('/courses', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id, data) => request(`/courses/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id) => request(`/courses/${id}`, { method: 'DELETE' }),
+  publish: (id) => request(`/courses/${id}/publish`, { method: 'PUT' }),
+  unpublish: (id) => request(`/courses/${id}/unpublish`, { method: 'PUT' }),
+  // Sections
+  createSection: (courseId, data) => request(`/courses/${courseId}/sections`, { method: 'POST', body: JSON.stringify(data) }),
+  updateSection: (courseId, sectionId, data) => request(`/courses/${courseId}/sections/${sectionId}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteSection: (courseId, sectionId) => request(`/courses/${courseId}/sections/${sectionId}`, { method: 'DELETE' }),
+  reorderSections: (courseId, sectionIds) => request(`/courses/${courseId}/sections/reorder`, { method: 'PUT', body: JSON.stringify({ sectionIds }) }),
+  // Comments
+  getComments: (courseId) => request(`/courses/${courseId}/comments`),
+  createComment: (courseId, content, parentId) => request(`/courses/${courseId}/comments`, { method: 'POST', body: JSON.stringify({ content, parentId }) }),
+  deleteComment: (courseId, commentId) => request(`/courses/${courseId}/comments/${commentId}`, { method: 'DELETE' }),
+};
+
+// Animations API
+export const animationsApi = {
+  create: (data) => request('/animations', { method: 'POST', body: JSON.stringify(data) }),
+  get: (id) => request(`/animations/${id}`),
+  update: (id, data) => request(`/animations/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id) => request(`/animations/${id}`, { method: 'DELETE' }),
+  reorder: (sectionId, animationIds) => request(`/animations/section/${sectionId}/reorder`, { method: 'PUT', body: JSON.stringify({ animationIds }) }),
+  // Built-in animations
+  getBuiltin: (category) => request(`/animations/builtin${category ? `?category=${category}` : ''}`),
+  getBuiltinCategories: () => request('/animations/builtin/categories'),
+  getBuiltinById: (id) => request(`/animations/builtin/${id}`),
+  seedBuiltin: () => request('/animations/builtin/seed', { method: 'POST' }),
+};
+
+// Videos API
+export const videosApi = {
+  getAll: (filters = {}) => {
+    const params = new URLSearchParams();
+    if (filters.grade) params.append('grade', filters.grade);
+    if (filters.subject) params.append('subject', filters.subject);
+    if (filters.status) params.append('status', filters.status);
+    const query = params.toString();
+    return request(`/videos${query ? `?${query}` : ''}`);
+  },
+  get: (id) => request(`/videos/${id}`),
+  getByShareCode: (code) => request(`/videos/share/${code}`),
+  getStorageUsage: () => request('/videos/storage'),
+  upload: (file, data = {}, onProgress) => {
+    return new Promise((resolve, reject) => {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('video', file);
+      if (data.title) formData.append('title', data.title);
+      if (data.description) formData.append('description', data.description);
+      if (data.grade) formData.append('grade', data.grade);
+      if (data.subject) formData.append('subject', data.subject);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${UPLOAD_BASE}/videos/upload`);
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable && onProgress) {
+          const percent = Math.round((e.loaded / e.total) * 100);
+          onProgress(percent);
+        }
+      };
+
+      xhr.onload = () => {
+        try {
+          const result = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve(result);
+          } else {
+            const error = new Error(result.error || '上传失败');
+            error.code = result.code;
+            error.current = result.current;
+            error.limit = result.limit;
+            reject(error);
+          }
+        } catch {
+          reject(new Error('上传失败'));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error('网络错误'));
+      xhr.send(formData);
+    });
+  },
+  update: (id, data) => request(`/videos/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  updateThumbnail: async (id, file) => {
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append('thumbnail', file);
+
+    const response = await fetch(`${API_BASE}/videos/${id}/thumbnail`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || '上传失败');
+    return result;
+  },
+  delete: (id) => request(`/videos/${id}`, { method: 'DELETE' }),
+  publish: (id) => request(`/videos/${id}/publish`, { method: 'PUT' }),
+  unpublish: (id) => request(`/videos/${id}/unpublish`, { method: 'PUT' }),
+  // Related videos and comments
+  getRelated: (id) => request(`/videos/${id}/related`),
+  getComments: (id) => request(`/videos/${id}/comments`),
+  addComment: (id, content, parentId) => request(`/videos/${id}/comments`, {
+    method: 'POST',
+    body: JSON.stringify({ content, parentId })
+  }),
+  deleteComment: (commentId) => request(`/videos/comments/${commentId}`, { method: 'DELETE' }),
+  // Danmaku
+  getDanmaku: (id) => request(`/videos/${id}/danmaku`),
+  addDanmaku: (id, content, timeSeconds, color) => request(`/videos/${id}/danmaku`, {
+    method: 'POST',
+    body: JSON.stringify({ content, timeSeconds, color })
+  }),
 };

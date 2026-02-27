@@ -16,6 +16,9 @@ import exportRoutes from './routes/export.js';
 import seatingRoutes from './routes/seating.js';
 import examRoutes from './routes/exams.js';
 import reportRoutes from './routes/reports.js';
+import courseRoutes from './routes/courses.js';
+import animationRoutes from './routes/animations.js';
+import videoRoutes from './routes/videos.js';
 
 dotenv.config();
 
@@ -40,6 +43,13 @@ app.use('/api/export', exportRoutes);
 app.use('/api/seating', seatingRoutes);
 app.use('/api/exams', examRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/courses', courseRoutes);
+app.use('/api/animations', animationRoutes);
+app.use('/api/videos', videoRoutes);
+
+// Serve uploaded files
+app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('public/uploads'));
 
 // Health check
 app.get('/api/health', (req, res) => {
