@@ -1,12 +1,12 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 
 // Mock the database module
-jest.unstable_mockModule('../db/index.js', () => ({
+jest.unstable_mockModule('../../db/index.js', () => ({
   query: jest.fn()
 }));
 
 // Mock the errors module
-jest.unstable_mockModule('../utils/errors.js', () => ({
+jest.unstable_mockModule('../../utils/errors.js', () => ({
   NotFoundError: class NotFoundError extends Error {
     constructor(resource) {
       super(`${resource}不存在`);
