@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { classesApi, studentsApi, attendanceApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 const ATTENDANCE_STATUS = {
   present: { label: '出勤', color: 'bg-green-500' },
@@ -36,6 +37,8 @@ export const RollCall = () => {
   // Quick roll call state
   const [attendanceRecords, setAttendanceRecords] = useState({});
   const [currentStudentIndex, setCurrentStudentIndex] = useState(0);
+
+  const toast = useToastContext();
 
   useEffect(() => {
     loadClasses();
@@ -189,6 +192,8 @@ export const RollCall = () => {
         ...attendanceRecords,
         [selectedStudent.id]: status,
       });
+      const statusLabel = ATTENDANCE_STATUS[status].label;
+      toast.success(`${selectedStudent.name} 已标记为${statusLabel}`);
     } catch (error) {
       console.error('Failed to record attendance:', error);
     }
@@ -208,6 +213,8 @@ export const RollCall = () => {
         ...attendanceRecords,
         [student.id]: status,
       });
+      const statusLabel = ATTENDANCE_STATUS[status].label;
+      toast.success(`${student.name}: ${statusLabel}`);
       setCurrentStudentIndex(currentStudentIndex + 1);
     } catch (error) {
       console.error('Failed to record attendance:', error);
@@ -222,6 +229,7 @@ export const RollCall = () => {
       const newRecords = {};
       students.forEach((s) => { newRecords[s.id] = 'present'; });
       setAttendanceRecords(newRecords);
+      toast.success('已标记全部学生出勤');
     } catch (error) {
       console.error('Failed to batch record:', error);
     }

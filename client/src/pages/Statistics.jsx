@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { classesApi, attendanceApi, scoresApi, assignmentsApi } from '../services/api';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 
 export const Statistics = () => {
   const [classes, setClasses] = useState([]);
@@ -247,6 +248,60 @@ export const Statistics = () => {
             </div>
           )}
 
+          {/* Attendance Charts */}
+          {attendanceStats?.summary && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                {/* Pie chart - attendance distribution */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-4">出勤分布</h3>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: '出勤', value: attendanceStats.summary.present || 0 },
+                          { name: '缺勤', value: attendanceStats.summary.absent || 0 },
+                          { name: '迟到', value: attendanceStats.summary.late || 0 },
+                          { name: '请假', value: attendanceStats.summary.leave || 0 },
+                        ].filter(d => d.value > 0)}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={90}
+                        dataKey="value"
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      >
+                        <Cell fill="#22c55e" />
+                        <Cell fill="#ef4444" />
+                        <Cell fill="#eab308" />
+                        <Cell fill="#3b82f6" />
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Bar chart - per student attendance */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-4">学生出勤率</h3>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <BarChart data={(attendanceStats.students || []).slice(0, 15).map(s => {
+                      const total = (s.present_count || 0) + (s.absent_count || 0) + (s.late_count || 0) + (s.leave_count || 0);
+                      return {
+                        name: s.name,
+                        出勤率: total > 0 ? Math.round((s.present_count || 0) / total * 100) : 0,
+                      };
+                    })}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="name" tick={{ fontSize: 12 }} angle={-45} textAnchor="end" height={60} />
+                      <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
+                      <Tooltip formatter={(value) => `${value}%`} />
+                      <Bar dataKey="出勤率" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+          )}
+
           {/* Student List */}
           <div className="bg-white rounded-lg shadow">
             <div className="p-4 border-b border-gray-200">
@@ -336,6 +391,25 @@ export const Statistics = () => {
             </div>
           )}
 
+          {/* Score Chart */}
+          {scoreStats?.ranking && scoreStats.ranking.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+                <h3 className="text-sm font-semibold text-gray-700 mb-4">积分排行 Top 15</h3>
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={scoreStats.ranking.slice(0, 15).map((s) => ({
+                    name: s.name,
+                    积分: s.total_score || 0,
+                  }))} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis type="number" tick={{ fontSize: 12 }} />
+                    <YAxis dataKey="name" type="category" width={60} tick={{ fontSize: 12 }} />
+                    <Tooltip />
+                    <Bar dataKey="积分" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+          )}
+
           {/* Ranking List */}
           <div className="bg-white rounded-lg shadow">
             <div className="p-4 border-b border-gray-200">
@@ -420,6 +494,25 @@ export const Statistics = () => {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Assignment Chart */}
+          {assignmentStats && assignmentStats.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+                <h3 className="text-sm font-semibold text-gray-700 mb-4">作业提交率</h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={assignmentStats.map(a => ({
+                    name: a.title.length > 8 ? a.title.slice(0, 8) + '...' : a.title,
+                    提交率: a.student_count > 0 ? Math.round((a.submission_count || 0) / a.student_count * 100) : 0,
+                  }))}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="name" tick={{ fontSize: 12 }} angle={-30} textAnchor="end" height={60} />
+                    <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
+                    <Tooltip formatter={(value) => `${value}%`} />
+                    <Bar dataKey="提交率" fill="#ec4899" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
           )}
 
           {/* Assignment List */}

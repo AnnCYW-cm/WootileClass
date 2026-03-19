@@ -19,6 +19,7 @@ import reportRoutes from './routes/reports.js';
 import courseRoutes from './routes/courses.js';
 import animationRoutes from './routes/animations.js';
 import videoRoutes from './routes/videos.js';
+import aiRoutes from './routes/ai.js';
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/animations', animationRoutes);
 app.use('/api/videos', videoRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static('uploads'));

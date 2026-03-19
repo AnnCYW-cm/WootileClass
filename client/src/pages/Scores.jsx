@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { classesApi, scoresApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export const Scores = () => {
   const navigate = useNavigate();
+  const toast = useToastContext();
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState(null);
   const [students, setStudents] = useState([]);
@@ -28,6 +30,9 @@ export const Scores = () => {
   const [ranking, setRanking] = useState([]);
   const [fullscreenRanking, setFullscreenRanking] = useState(false);
 
+  // Score flash animation state
+  const [scoreFlash, setScoreFlash] = useState(null); // { studentId, value }
+
   // Preset management state
   const [showPresetModal, setShowPresetModal] = useState(false);
   const [newPreset, setNewPreset] = useState({ name: '', score: 1, icon: '⭐' });
@@ -49,6 +54,15 @@ export const Scores = () => {
       loadRanking();
     }
   }, [selectedClass, activeTab, rankingPeriod]);
+
+  useEffect(() => {
+    if (!fullscreenRanking) return;
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setFullscreenRanking(false);
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [fullscreenRanking]);
 
   const loadClasses = async () => {
     try {
@@ -105,7 +119,10 @@ export const Scores = () => {
         change: preset.score,
         reason: preset.name,
       });
+      setScoreFlash({ studentId: student.id, value: preset.score });
+      setTimeout(() => setScoreFlash(null), 800);
       loadStudents();
+      toast.success(`${student.name} ${preset.score > 0 ? '+' : ''}${preset.score}`);
       if (activeTab === 'ranking') {
         loadRanking();
       }
@@ -124,6 +141,7 @@ export const Scores = () => {
         reason: scoreReason,
       });
       setShowScoreModal(false);
+      toast.success(`已为 ${selectedStudent.name} ${scoreValue > 0 ? '加' : '减'} ${Math.abs(scoreValue)} 分`);
       loadStudents();
       if (activeTab === 'ranking') {
         loadRanking();
@@ -174,6 +192,7 @@ export const Scores = () => {
       setNewPreset({ name: '', score: 1, icon: '⭐' });
       setPresetError('');
       loadPresets();
+      toast.success('积分规则已创建');
     } catch (error) {
       setPresetError(error.message || '创建失败');
     }
@@ -350,8 +369,20 @@ export const Scores = () => {
                 >
                   <div className="text-center">
                     <div className="font-semibold text-gray-900">{student.name}</div>
-                    <div className="text-2xl font-bold text-purple-600 mt-3">
+                    <div className="text-2xl font-bold text-purple-600 mt-3 relative">
                       {student.total_score}
+                      {scoreFlash?.studentId === student.id && (
+                        <motion.span
+                          initial={{ opacity: 1, y: 0 }}
+                          animate={{ opacity: 0, y: -30 }}
+                          transition={{ duration: 0.8 }}
+                          className={`absolute -top-2 left-1/2 -translate-x-1/2 text-sm font-bold ${
+                            scoreFlash.value > 0 ? 'text-green-500' : 'text-red-500'
+                          }`}
+                        >
+                          {scoreFlash.value > 0 ? '+' : ''}{scoreFlash.value}
+                        </motion.span>
+                      )}
                     </div>
                     <div className="text-xs text-gray-400 mt-1">积分</div>
                   </div>

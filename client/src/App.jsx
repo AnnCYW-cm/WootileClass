@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './store/AuthContext';
+import { ToastProvider } from './store/ToastContext';
 import { PublicLayout, DashboardLayout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Home } from './pages/Home';
@@ -25,10 +26,10 @@ import { DataExport } from './pages/DataExport';
 import { ExamManagement } from './pages/ExamManagement';
 import { ParentReports } from './pages/ParentReports';
 import { Courses } from './pages/Courses';
-import { CourseEditor } from './pages/CourseEditor';
 import { CoursePlayer } from './pages/CoursePlayer';
 import { CourseViewer } from './pages/CourseViewer';
 import { Videos } from './pages/Videos';
+import { AILessonPrep } from './pages/AILessonPrep';
 import { VideoPlayer } from './pages/VideoPlayer';
 import { VideoViewer } from './pages/VideoViewer';
 import './index.css';
@@ -36,6 +37,7 @@ import './index.css';
 function App() {
   return (
     <AuthProvider>
+      <ToastProvider>
       <BrowserRouter>
         <Routes>
           {/* Public routes */}
@@ -83,12 +85,13 @@ function App() {
             <Route path="reports" element={<ParentReports />} />
             <Route path="courses" element={<Courses />} />
             <Route path="courses/:id/play" element={<CoursePlayer />} />
-            <Route path="courses/:id/edit" element={<CourseEditor />} />
             <Route path="videos" element={<Videos />} />
             <Route path="videos/:id/play" element={<VideoPlayer />} />
+            <Route path="ai-prep" element={<AILessonPrep />} />
           </Route>
         </Routes>
       </BrowserRouter>
+      </ToastProvider>
     </AuthProvider>
   );
 }

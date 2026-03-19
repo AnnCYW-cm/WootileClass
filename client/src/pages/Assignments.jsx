@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { classesApi, assignmentsApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export const Assignments = () => {
   const [classes, setClasses] = useState([]);
@@ -18,6 +19,7 @@ export const Assignments = () => {
   });
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('active');
+  const toast = useToastContext();
 
   useEffect(() => {
     loadClasses();
@@ -101,7 +103,7 @@ export const Assignments = () => {
       await assignmentsApi.delete(id);
       loadAssignments();
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -113,7 +115,7 @@ export const Assignments = () => {
       });
       loadAssignments();
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -126,14 +128,27 @@ export const Assignments = () => {
   };
 
   const formatDeadline = (deadline) => {
-    if (!deadline) return '无截止时间';
+    if (!deadline) return <span className="text-gray-400">无截止时间</span>;
     const date = new Date(deadline);
     const now = new Date();
-    const isExpired = date < now;
+    const diff = date - now;
+    const isExpired = diff < 0;
+    const absDiff = Math.abs(diff);
+    const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(absDiff / (1000 * 60 * 60));
+
+    let relativeText = '';
+    if (isExpired) {
+      relativeText = days > 0 ? `已截止${days}天` : `已截止${hours}小时`;
+    } else {
+      relativeText = days > 0 ? `还剩${days}天` : `还剩${hours}小时`;
+    }
+
+    const dateStr = date.toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
     return (
-      <span className={isExpired ? 'text-red-500' : 'text-gray-500'}>
-        {date.toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-        {isExpired && ' (已截止)'}
+      <span className={isExpired ? 'text-red-500' : days <= 1 ? 'text-amber-500' : 'text-gray-500'}>
+        {dateStr} · {relativeText}
       </span>
     );
   };

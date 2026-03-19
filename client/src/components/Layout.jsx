@@ -86,6 +86,7 @@ export const DashboardLayout = () => {
   const [showResourceMenu, setShowResourceMenu] = useState(false);
   const [showToolsMenu, setShowToolsMenu] = useState(false);
   const [showDataMenu, setShowDataMenu] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -106,6 +107,21 @@ export const DashboardLayout = () => {
                   木瓦课堂
                 </span>
               </Link>
+              {/* Mobile hamburger button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+              >
+                {mobileMenuOpen ? (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                )}
+              </button>
               <div className="hidden md:flex space-x-1">
                 <Link
                   to="/dashboard"
@@ -156,6 +172,7 @@ export const DashboardLayout = () => {
                     <div className="absolute left-0 mt-2 w-40 bg-white rounded-xl shadow-lg py-2 z-50 border border-gray-100">
                       <Link to="/dashboard/courses" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">课程动画</Link>
                       <Link to="/dashboard/videos" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">视频课程</Link>
+                      <Link to="/dashboard/ai-prep" className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-colors">AI 备课助手</Link>
                     </div>
                   )}
                 </div>
@@ -202,7 +219,7 @@ export const DashboardLayout = () => {
                 </div>
               </div>
             </div>
-            <div className="flex items-center space-x-8">
+            <div className="hidden md:flex items-center space-x-8">
               <Link
                 to="/dashboard/membership"
                 className="px-6 py-2.5 bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-full text-base font-medium hover:opacity-90 transition-opacity flex items-center gap-2.5 shadow-sm"
@@ -221,6 +238,80 @@ export const DashboardLayout = () => {
           </div>
         </div>
       </nav>
+      {/* Mobile menu panel */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-b border-gray-100 shadow-lg sticky top-20 z-40">
+          <div className="px-4 py-4 space-y-4">
+            {/* 工作台 */}
+            <div>
+              <Link
+                to="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+              >
+                工作台
+              </Link>
+            </div>
+            {/* 班级管理 */}
+            <div>
+              <Link
+                to="/dashboard/classes"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+              >
+                班级管理
+              </Link>
+            </div>
+            {/* 教学管理 */}
+            <div>
+              <div className="px-4 py-1.5 text-xs font-semibold text-purple-500 uppercase tracking-wider">教学管理</div>
+              <Link to="/dashboard/rollcall" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">点名系统</Link>
+              <Link to="/dashboard/scores" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">学生积分</Link>
+              <Link to="/dashboard/assignments" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">作业管理</Link>
+              <Link to="/dashboard/exams" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">成绩管理</Link>
+            </div>
+            {/* 教学资源 */}
+            <div>
+              <div className="px-4 py-1.5 text-xs font-semibold text-purple-500 uppercase tracking-wider">教学资源</div>
+              <Link to="/dashboard/courses" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">课程动画</Link>
+              <Link to="/dashboard/videos" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">视频课程</Link>
+              <Link to="/dashboard/ai-prep" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">AI 备课助手</Link>
+            </div>
+            {/* 课堂工具 */}
+            <div>
+              <div className="px-4 py-1.5 text-xs font-semibold text-purple-500 uppercase tracking-wider">课堂工具</div>
+              <Link to="/dashboard/tools" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">计时器/噪音监测</Link>
+              <Link to="/dashboard/groups" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">分组工具</Link>
+              <Link to="/dashboard/seating" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">座位表</Link>
+            </div>
+            {/* 数据报表 */}
+            <div>
+              <div className="px-4 py-1.5 text-xs font-semibold text-purple-500 uppercase tracking-wider">数据报表</div>
+              <Link to="/dashboard/data" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">数据看板</Link>
+              <Link to="/dashboard/export" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">数据导出</Link>
+              <Link to="/dashboard/reports" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">家长报告</Link>
+              <Link to="/dashboard/statistics" onClick={() => setMobileMenuOpen(false)} className="block px-8 py-2 rounded-lg text-sm text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">数据统计</Link>
+            </div>
+            {/* User info section */}
+            <div className="border-t border-gray-100 pt-4 space-y-2">
+              <Link
+                to="/dashboard/membership"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-amber-600 hover:bg-amber-50 transition-colors"
+              >
+                <span>👑</span> 会员
+              </Link>
+              <div className="px-4 py-2 text-sm text-gray-600 font-medium">{user?.name || user?.email}</div>
+              <button
+                onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
+                className="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
+              >
+                退出登录
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <main className="max-w-7xl mx-auto py-10 px-8">
         <Outlet />
       </main>

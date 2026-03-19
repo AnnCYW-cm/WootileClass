@@ -23,6 +23,12 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+server/logs/*
+!server/logs/.gitkeep
+
+# Uploads (keep directory structure)
+server/uploads/*
+!server/uploads/.gitkeep
 
 # Test coverage
 coverage/

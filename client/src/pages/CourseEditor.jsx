@@ -31,6 +31,9 @@ export const CourseEditor = () => {
   const [animationDescription, setAnimationDescription] = useState('');
   const [uploadedFile, setUploadedFile] = useState(null);
 
+  // Quick upload state
+  const [quickUploadFile, setQuickUploadFile] = useState(null);
+
   // Preview state
   const [previewAnimation, setPreviewAnimation] = useState(null);
 
@@ -184,6 +187,61 @@ export const CourseEditor = () => {
     }
   };
 
+  // Auto-create a default section if none exists, then open animation modal
+  const handleAutoCreateSectionAndAdd = async () => {
+    try {
+      await coursesApi.createSection(id, { title: '默认章节' });
+      const data = await coursesApi.getById(id);
+      setCourse(data);
+      const newSectionId = data.sections?.[0]?.id;
+      if (newSectionId) {
+        handleAddAnimation(newSectionId);
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // Quick upload: auto-create section if needed, then upload file as animation
+  const handleQuickUpload = async (file) => {
+    let sectionId = course?.sections?.[0]?.id;
+
+    // Auto-create default section if none exists
+    if (!sectionId) {
+      try {
+        await coursesApi.createSection(id, { title: '默认章节' });
+        const data = await coursesApi.getById(id);
+        setCourse(data);
+        sectionId = data.sections?.[0]?.id;
+      } catch (err) {
+        alert(err.message);
+        return;
+      }
+    }
+
+    // Determine file type
+    const ext = file.name.split('.').pop().toLowerCase();
+    const isVideo = ['mp4', 'webm', 'mov'].includes(ext);
+    const isGif = ext === 'gif';
+    const isLottie = ext === 'json';
+
+    if (!isVideo && !isGif && !isLottie) {
+      alert('不支持的文件格式');
+      return;
+    }
+
+    // For animation files (Lottie/GIF), use the AnimationUploader flow
+    // Set up the animation modal with the file pre-loaded
+    setTargetSectionId(sectionId);
+    setAnimationTab('upload');
+    setAnimationTitle(file.name.replace(/\.[^/.]+$/, ''));
+    setAnimationDescription('');
+    setShowAnimationModal(true);
+    // The user will complete the upload in the modal
+    // We store the file reference for the uploader to pick up
+    setQuickUploadFile(file);
+  };
+
   const copyShareLink = () => {
     if (course?.share_code) {
       const link = `${window.location.origin}/learn/${course.share_code}`;
@@ -324,6 +382,47 @@ export const CourseEditor = () => {
             />
           </div>
         </div>
+      </div>
+
+      {/* Quick Add Content */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">添加内容</h2>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => {
+              // If no sections exist, we'll auto-create one when adding
+              const sectionId = course?.sections?.[0]?.id;
+              if (sectionId) {
+                handleAddAnimation(sectionId);
+              } else {
+                handleAutoCreateSectionAndAdd();
+              }
+            }}
+            className="flex items-center gap-2 px-5 py-3 bg-purple-50 text-purple-600 rounded-xl font-medium hover:bg-purple-100 transition border border-purple-200"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            从动画库选择
+          </button>
+          <label className="flex items-center gap-2 px-5 py-3 bg-blue-50 text-blue-600 rounded-xl font-medium hover:bg-blue-100 transition border border-blue-200 cursor-pointer">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            上传文件
+            <input
+              type="file"
+              accept=".json,.gif,.mp4,.webm,.mov"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleQuickUpload(file);
+                e.target.value = '';
+              }}
+            />
+          </label>
+        </div>
+        <p className="text-xs text-gray-400 mt-3">支持 Lottie JSON、GIF、MP4、WebM、MOV 格式</p>
       </div>
 
       {/* Sections */}
@@ -467,20 +566,8 @@ export const CourseEditor = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 mx-auto bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">还没有章节</h3>
-            <p className="text-gray-500 mb-6">创建章节来组织您的课程内容</p>
-            <button
-              onClick={handleAddSection}
-              className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition"
-            >
-              创建第一个章节
-            </button>
+          <div className="text-center py-8">
+            <p className="text-gray-400">章节可以帮助组织课程内容，也可以稍后再添加</p>
           </div>
         )}
       </div>

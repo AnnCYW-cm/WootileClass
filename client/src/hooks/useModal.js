@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 /**
  * Hook for managing modal state
@@ -44,6 +44,15 @@ export const useModal = (initialFormData = {}) => {
   }, [initialFormData]);
 
   const isEditing = editingItem !== null;
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') close();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isOpen, close]);
 
   return {
     isOpen,

@@ -1,6 +1,6 @@
 const API_BASE = '/api';
 // 直接连接后端，用于大文件上传（绕过 Vite 代理以支持进度显示）
-const UPLOAD_BASE = import.meta.env.DEV ? 'http://localhost:3001/api' : '/api';
+const UPLOAD_BASE = import.meta.env.DEV ? 'http://localhost:3002/api' : '/api';
 
 const getToken = () => localStorage.getItem('token');
 
@@ -208,6 +208,13 @@ export const animationsApi = {
   getBuiltinCategories: () => request('/animations/builtin/categories'),
   getBuiltinById: (id) => request(`/animations/builtin/${id}`),
   seedBuiltin: () => request('/animations/builtin/seed', { method: 'POST' }),
+};
+
+// AI API
+export const aiApi = {
+  getStudentComment: (studentId) => request(`/ai/comment/student/${studentId}`),
+  generateLessonPlan: (data) => request('/ai/lesson-plan', { method: 'POST', body: JSON.stringify(data) }),
+  getClassSummary: (classId) => request(`/ai/summary/class/${classId}`),
 };
 
 // Videos API

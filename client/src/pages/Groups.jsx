@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { classesApi, studentsApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export const Groups = () => {
   const [classes, setClasses] = useState([]);
@@ -14,6 +15,7 @@ export const Groups = () => {
   const [savedGroups, setSavedGroups] = useState([]);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [groupName, setGroupName] = useState('');
+  const toast = useToastContext();
 
   useEffect(() => {
     loadClasses();
@@ -68,7 +70,7 @@ export const Groups = () => {
 
   const generateGroups = async () => {
     if (students.length === 0) {
-      alert('班级中没有学生');
+      toast.warning('班级中没有学生');
       return;
     }
 
@@ -116,7 +118,7 @@ export const Groups = () => {
 
   const saveCurrentGroups = () => {
     if (groups.length === 0) {
-      alert('请先生成分组');
+      toast.warning('请先生成分组');
       return;
     }
     setShowSaveModal(true);
@@ -124,7 +126,7 @@ export const Groups = () => {
 
   const handleSaveGroups = () => {
     if (!groupName.trim()) {
-      alert('请输入分组名称');
+      toast.warning('请输入分组名称');
       return;
     }
 
@@ -159,7 +161,7 @@ export const Groups = () => {
   const pickRandomFromGroup = (group) => {
     if (group.students.length === 0) return;
     const randomStudent = group.students[Math.floor(Math.random() * group.students.length)];
-    alert(`抽中: ${randomStudent.name}`);
+    toast.success(`抽中: ${randomStudent.name}`);
   };
 
   if (loading) {
