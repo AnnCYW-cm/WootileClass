@@ -99,18 +99,24 @@ export const createAssignment = async (req, res) => {
 export const updateAssignment = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, deadline, status } = req.body;
 
-    // Check ownership
-    const checkResult = await query('SELECT id FROM assignments WHERE id = $1 AND user_id = $2', [id, req.userId]);
+    // Check ownership and get existing data
+    const checkResult = await query('SELECT * FROM assignments WHERE id = $1 AND user_id = $2', [id, req.userId]);
     if (checkResult.rows.length === 0) {
       return res.status(404).json({ error: '作业不存在' });
     }
 
+    // Merge with existing values to prevent nullifying unset fields
+    const existing = checkResult.rows[0];
+    const title = req.body.title !== undefined ? req.body.title : existing.title;
+    const description = req.body.description !== undefined ? req.body.description : existing.description;
+    const deadline = req.body.deadline !== undefined ? req.body.deadline : existing.deadline;
+    const status = req.body.status !== undefined ? req.body.status : existing.status;
+
     const result = await query(
       `UPDATE assignments SET title = $1, description = $2, deadline = $3, status = $4
        WHERE id = $5 RETURNING *`,
-      [title, description, deadline, status || 'active', id]
+      [title, description, deadline, status, id]
     );
 
     res.json(result.rows[0]);
