@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { aiApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export const DataDashboard = () => {
   const navigate = useNavigate();
+  const toast = useToastContext();
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState('');
   const [summary, setSummary] = useState(null);
@@ -12,6 +15,8 @@ export const DataDashboard = () => {
   const [todos, setTodos] = useState(null);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('week');
+  const [aiSummary, setAiSummary] = useState('');
+  const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
 
   useEffect(() => {
     fetchClasses();
@@ -72,6 +77,23 @@ export const DataDashboard = () => {
       console.error('获取看板数据失败:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateSummary = async () => {
+    if (!selectedClass) {
+      toast.warning('请先选择班级');
+      return;
+    }
+    setAiSummaryLoading(true);
+    try {
+      const data = await aiApi.getClassSummary(selectedClass);
+      setAiSummary(data.summary);
+      toast.success('课堂小结已生成');
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setAiSummaryLoading(false);
     }
   };
 
@@ -282,6 +304,57 @@ export const DataDashboard = () => {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* AI Daily Summary */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">AI 课堂小结</h2>
+              <button
+                onClick={handleGenerateSummary}
+                disabled={aiSummaryLoading}
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl text-sm font-medium hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2"
+              >
+                {aiSummaryLoading ? (
+                  <>
+                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    生成中...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    生成今日小结
+                  </>
+                )}
+              </button>
+            </div>
+            {aiSummary ? (
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-5">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{aiSummary}</p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(aiSummary); toast.success('已复制'); }}
+                    className="px-3 py-1.5 text-xs text-purple-600 hover:bg-purple-100 rounded-lg transition"
+                  >
+                    复制
+                  </button>
+                  <button
+                    onClick={handleGenerateSummary}
+                    disabled={aiSummaryLoading}
+                    className="px-3 py-1.5 text-xs text-purple-600 hover:bg-purple-100 rounded-lg transition"
+                  >
+                    重新生成
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-gray-400 text-sm">点击"生成今日小结"，AI 将根据今日考勤、积分和作业数据生成课堂报告</p>
+            )}
           </div>
         </>
       ) : (

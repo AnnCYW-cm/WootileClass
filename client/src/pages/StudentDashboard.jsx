@@ -1,15 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { aiApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export const StudentDashboard = () => {
   const { studentId } = useParams();
   const navigate = useNavigate();
+  const toast = useToastContext();
   const [summary, setSummary] = useState(null);
   const [scoreTrend, setScoreTrend] = useState([]);
   const [attendanceCalendar, setAttendanceCalendar] = useState([]);
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [aiComment, setAiComment] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     fetchStudentData();
@@ -95,6 +100,19 @@ export const StudentDashboard = () => {
     return days;
   };
 
+  const handleGenerateComment = async () => {
+    setAiLoading(true);
+    try {
+      const data = await aiApi.getStudentComment(studentId);
+      setAiComment(data.comment);
+      toast.success('评语已生成');
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-12">
@@ -119,10 +137,32 @@ export const StudentDashboard = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl font-bold text-gray-800">{summary.student?.name}</h1>
           <p className="text-gray-500">{summary.student?.class_name} · {summary.student?.student_no || '无学号'}</p>
         </div>
+        <button
+          onClick={handleGenerateComment}
+          disabled={aiLoading}
+          className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl text-sm font-medium hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2"
+        >
+          {aiLoading ? (
+            <>
+              <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              生成中...
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              AI 生成评语
+            </>
+          )}
+        </button>
       </div>
 
       {/* Labels */}
@@ -133,6 +173,36 @@ export const StudentDashboard = () => {
               {label.text}
             </span>
           ))}
+        </div>
+      )}
+
+      {/* AI Comment */}
+      {aiComment && (
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-100 p-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-purple-700 flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              AI 生成评语
+            </h3>
+            <div className="flex gap-2">
+              <button
+                onClick={() => { navigator.clipboard.writeText(aiComment); toast.success('已复制'); }}
+                className="px-3 py-1 text-xs text-purple-600 hover:bg-purple-100 rounded-lg transition"
+              >
+                复制
+              </button>
+              <button
+                onClick={handleGenerateComment}
+                disabled={aiLoading}
+                className="px-3 py-1 text-xs text-purple-600 hover:bg-purple-100 rounded-lg transition"
+              >
+                重新生成
+              </button>
+            </div>
+          </div>
+          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{aiComment}</p>
         </div>
       )}
 
