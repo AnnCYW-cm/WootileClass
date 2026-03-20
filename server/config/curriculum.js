@@ -1,6 +1,7 @@
 /**
  * 课程标准目录 - 人教版（部编版）2024-2025
- * 覆盖小学 1-6 年级：语文、数学、英语（3-6年级）
+ * 覆盖小学 1-6 年级：语文、数学、英语
+ * 英语 1-2 年级为一年级起点版，3-6 年级为三年级起点版（PEP）
  */
 
 const curriculum = {
@@ -52,6 +53,29 @@ const curriculum = {
         { unit: '第八单元 总复习', lessons: ['总复习'] },
       ],
     },
+    '英语': {
+      '上册': [
+        { unit: 'Starter', lessons: ['Starter'] },
+        { unit: 'Unit 1 School', lessons: ['School'] },
+        { unit: 'Unit 2 Face', lessons: ['Face'] },
+        { unit: 'Unit 3 Animals', lessons: ['Animals'] },
+        { unit: 'Revision 1', lessons: ['Revision 1'] },
+        { unit: 'Unit 4 Numbers', lessons: ['Numbers'] },
+        { unit: 'Unit 5 Colours', lessons: ['Colours'] },
+        { unit: 'Unit 6 Fruit', lessons: ['Fruit'] },
+        { unit: 'Revision 2', lessons: ['Revision 2'] },
+      ],
+      '下册': [
+        { unit: 'Unit 1 Classroom', lessons: ['Classroom'] },
+        { unit: 'Unit 2 Room', lessons: ['Room'] },
+        { unit: 'Unit 3 Toys', lessons: ['Toys'] },
+        { unit: 'Revision 1', lessons: ['Revision 1'] },
+        { unit: 'Unit 4 Food', lessons: ['Food'] },
+        { unit: 'Unit 5 Drink', lessons: ['Drink'] },
+        { unit: 'Unit 6 Clothes', lessons: ['Clothes'] },
+        { unit: 'Revision 2', lessons: ['Revision 2'] },
+      ],
+    },
   },
 
   // ==================== 二年级 ====================
@@ -101,6 +125,28 @@ const curriculum = {
         { unit: '第八单元 克和千克', lessons: ['认识克', '认识千克'] },
         { unit: '第九单元 数学广角——推理', lessons: ['简单的推理'] },
         { unit: '第十单元 总复习', lessons: ['总复习'] },
+      ],
+    },
+    '英语': {
+      '上册': [
+        { unit: 'Unit 1 My Family', lessons: ['My Family'] },
+        { unit: 'Unit 2 Boys and Girls', lessons: ['Boys and Girls'] },
+        { unit: 'Unit 3 My Friends', lessons: ['My Friends'] },
+        { unit: 'Revision 1', lessons: ['Revision 1'] },
+        { unit: 'Unit 4 In the Community', lessons: ['In the Community'] },
+        { unit: 'Unit 5 In the Park', lessons: ['In the Park'] },
+        { unit: 'Unit 6 Happy Holidays', lessons: ['Happy Holidays'] },
+        { unit: 'Revision 2', lessons: ['Revision 2'] },
+      ],
+      '下册': [
+        { unit: 'Unit 1 Playtime', lessons: ['Playtime'] },
+        { unit: 'Unit 2 Weather', lessons: ['Weather'] },
+        { unit: 'Unit 3 Seasons', lessons: ['Seasons'] },
+        { unit: 'Revision 1', lessons: ['Revision 1'] },
+        { unit: 'Unit 4 Time', lessons: ['Time'] },
+        { unit: 'Unit 5 My Day', lessons: ['My Day'] },
+        { unit: 'Unit 6 My Week', lessons: ['My Week'] },
+        { unit: 'Revision 2', lessons: ['Revision 2'] },
       ],
     },
   },
