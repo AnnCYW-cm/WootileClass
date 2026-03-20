@@ -152,7 +152,7 @@ export const CourseViewer = () => {
           <div className="p-5 border-b border-gray-700">
             <h1 className="text-lg font-bold text-white mb-1 truncate">{course.title}</h1>
             {course.subject && (
-              <span className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded-md">
+              <span className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded-xl">
                 {course.subject}
               </span>
             )}

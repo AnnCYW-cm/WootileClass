@@ -110,7 +110,7 @@ export const Groups = () => {
       'bg-yellow-100 border-yellow-300',
       'bg-purple-100 border-purple-300',
       'bg-pink-100 border-pink-300',
-      'bg-indigo-100 border-indigo-300',
+      'bg-purple-100 border-purple-300',
       'bg-orange-100 border-orange-300',
     ];
     return colors[index % colors.length];

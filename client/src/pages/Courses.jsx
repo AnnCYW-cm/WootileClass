@@ -284,7 +284,7 @@ export const Courses = () => {
                 )}
                 <div className="flex items-center flex-wrap gap-2 text-sm text-gray-400">
                   {course.subject && (
-                    <span className="px-2 py-1 bg-purple-50 text-purple-600 rounded-md text-xs">{course.subject}</span>
+                    <span className="px-2 py-1 bg-purple-50 text-purple-600 rounded-xl text-xs">{course.subject}</span>
                   )}
                   <span>{course.section_count || 0} 章节</span>
                   <span>{course.animation_count || 0} 动画</span>

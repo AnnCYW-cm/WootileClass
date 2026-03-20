@@ -22,7 +22,7 @@ export const ClassroomTools = () => {
             onClick={() => setActiveTool(tool.key)}
             className={`px-4 py-2 rounded-lg font-medium flex items-center space-x-2 ${
               activeTool === tool.key
-                ? 'bg-indigo-600 text-white'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
                 : 'bg-white text-gray-700 hover:bg-gray-100'
             }`}
           >
@@ -162,7 +162,7 @@ const TimerTool = () => {
   // Fullscreen timer view
   if (isFullscreen) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-indigo-900 to-purple-900 z-50 flex flex-col items-center justify-center">
+      <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-pink-900 z-50 flex flex-col items-center justify-center">
         <button
           onClick={() => setIsFullscreen(false)}
           className="absolute top-4 right-4 text-white hover:text-gray-300"
@@ -227,16 +227,16 @@ const TimerTool = () => {
         <div className="inline-flex rounded-lg bg-gray-100 p-1">
           <button
             onClick={() => handleModeChange('countdown')}
-            className={`px-4 py-2 rounded-md text-sm font-medium ${
-              mode === 'countdown' ? 'bg-white shadow text-indigo-600' : 'text-gray-600'
+            className={`px-4 py-2 rounded-xl text-sm font-medium ${
+              mode === 'countdown' ? 'bg-white shadow text-purple-600' : 'text-gray-600'
             }`}
           >
             倒计时
           </button>
           <button
             onClick={() => handleModeChange('stopwatch')}
-            className={`px-4 py-2 rounded-md text-sm font-medium ${
-              mode === 'stopwatch' ? 'bg-white shadow text-indigo-600' : 'text-gray-600'
+            className={`px-4 py-2 rounded-xl text-sm font-medium ${
+              mode === 'stopwatch' ? 'bg-white shadow text-purple-600' : 'text-gray-600'
             }`}
           >
             正计时
@@ -260,7 +260,7 @@ const TimerTool = () => {
         {mode === 'countdown' && (
           <div className="w-full h-2 bg-gray-200 rounded-full mt-4 overflow-hidden">
             <motion.div
-              className="h-full bg-indigo-500"
+              className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
               animate={{ width: `${getProgressPercent()}%` }}
               transition={{ duration: 0.5 }}
             />
@@ -281,7 +281,7 @@ const TimerTool = () => {
               setInputTime({ ...inputTime, minutes: mins });
               setTime(mins * 60 + inputTime.seconds);
             }}
-            className="w-16 text-center text-2xl font-mono border border-gray-300 rounded-md py-2"
+            className="w-16 text-center text-2xl font-mono border border-gray-300 rounded-xl py-2"
           />
           <span className="text-2xl">:</span>
           <input
@@ -294,7 +294,7 @@ const TimerTool = () => {
               setInputTime({ ...inputTime, seconds: secs });
               setTime(inputTime.minutes * 60 + secs);
             }}
-            className="w-16 text-center text-2xl font-mono border border-gray-300 rounded-md py-2"
+            className="w-16 text-center text-2xl font-mono border border-gray-300 rounded-xl py-2"
           />
         </div>
       )}
@@ -330,7 +330,7 @@ const TimerTool = () => {
         </button>
         <button
           onClick={() => setIsFullscreen(true)}
-          className="px-6 py-3 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-600 flex items-center"
+          className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:opacity-90 flex items-center"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -583,7 +583,7 @@ const NoiseMonitor = () => {
         )}
         <button
           onClick={() => setIsFullscreen(true)}
-          className="px-6 py-3 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-600 flex items-center"
+          className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:opacity-90 flex items-center"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />

@@ -43,7 +43,7 @@ const features = [
     subtitle: '洞察一切',
     description: '出勤、积分、作业，多维分析。让数据说话。',
     icon: '📊',
-    gradient: 'from-indigo-500 to-purple-400',
+    gradient: 'from-purple-500 to-violet-400',
   },
 ];
 

@@ -139,7 +139,7 @@ export const DataDashboard = () => {
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={`px-4 py-1.5 rounded-md text-sm transition-colors ${
+                className={`px-4 py-1.5 rounded-xl text-sm transition-colors ${
                   period === p ? 'bg-white text-purple-600 shadow-sm' : 'text-gray-600'
                 }`}
               >

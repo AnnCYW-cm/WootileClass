@@ -632,7 +632,7 @@ export const RollCall = () => {
                     <div className="text-2xl text-green-600 mb-2">点名完成！</div>
                     <button
                       onClick={() => setCurrentStudentIndex(0)}
-                      className="text-purple-600 hover:text-indigo-500"
+                      className="text-purple-600 hover:text-purple-500"
                     >
                       重新开始
                     </button>

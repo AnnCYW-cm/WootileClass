@@ -190,7 +190,7 @@ export const AssignmentDetail = () => {
         {assignment.type === 'homework' && assignment.submit_code && (
           <button
             onClick={() => setShowQRModal(true)}
-            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+            className="px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700"
           >
             查看提交码
           </button>
@@ -428,7 +428,7 @@ export const AssignmentDetail = () => {
                     type="number"
                     min="0"
                     max="100"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-purple-500 focus:border-transparent"
                     value={gradeForm.score}
                     onChange={(e) => setGradeForm({ ...gradeForm, score: e.target.value })}
                     placeholder="0-100"
@@ -459,7 +459,7 @@ export const AssignmentDetail = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">评语</label>
                 <textarea
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-purple-500 focus:border-transparent"
                   value={gradeForm.comment}
                   onChange={(e) => setGradeForm({ ...gradeForm, comment: e.target.value })}
                   placeholder="填写评语（选填）"
@@ -484,7 +484,7 @@ export const AssignmentDetail = () => {
                 <div className="flex space-x-2">
                   <input
                     type="text"
-                    className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                    className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-xl"
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     placeholder="添加新的快捷评语"
@@ -493,7 +493,7 @@ export const AssignmentDetail = () => {
                   <button
                     type="button"
                     onClick={handleAddComment}
-                    className="px-3 py-1 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:opacity-90"
+                    className="px-3 py-1 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:opacity-90"
                   >
                     添加
                   </button>
@@ -504,13 +504,13 @@ export const AssignmentDetail = () => {
             <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={() => setShowGradeModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50"
               >
                 取消
               </button>
               <button
                 onClick={handleGrade}
-                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:opacity-90"
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:opacity-90"
               >
                 保存批改
               </button>
@@ -567,14 +567,14 @@ export const AssignmentDetail = () => {
             <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={() => setShowUploadModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50"
               >
                 取消
               </button>
               <button
                 onClick={handleUpload}
                 disabled={uploadImages.length === 0}
-                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:opacity-90 disabled:bg-gray-400"
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:opacity-90 disabled:bg-gray-400"
               >
                 上传
               </button>
@@ -602,7 +602,7 @@ export const AssignmentDetail = () => {
             </p>
             <button
               onClick={() => setShowQRModal(false)}
-              className="mt-6 px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:opacity-90"
+              className="mt-6 px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:opacity-90"
             >
               关闭
             </button>

@@ -83,7 +83,7 @@ export const StudentSubmit = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
@@ -118,7 +118,7 @@ export const StudentSubmit = () => {
               setSubmitted(false);
               setImages([]);
             }}
-            className="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+            className="mt-6 px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:opacity-90"
           >
             重新提交
           </button>
@@ -130,12 +130,12 @@ export const StudentSubmit = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <div className="bg-indigo-600 text-white p-4">
+      <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4">
         <div className="max-w-lg mx-auto">
           <h1 className="text-xl font-bold">{assignment.title}</h1>
-          <p className="text-indigo-200 text-sm mt-1">{assignment.class_name}</p>
+          <p className="text-purple-200 text-sm mt-1">{assignment.class_name}</p>
           {assignment.deadline && (
-            <p className="text-indigo-200 text-sm mt-1">
+            <p className="text-purple-200 text-sm mt-1">
               截止时间: {new Date(assignment.deadline).toLocaleString('zh-CN')}
             </p>
           )}
@@ -157,7 +157,7 @@ export const StudentSubmit = () => {
           <input
             type="text"
             placeholder="搜索姓名或学号..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md mb-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-xl mb-3 focus:outline-none focus:ring-purple-500 focus:border-transparent"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -167,7 +167,7 @@ export const StudentSubmit = () => {
                 key={student.id}
                 className={`flex items-center p-3 rounded-lg cursor-pointer ${
                   selectedStudent === student.id
-                    ? 'bg-indigo-50 border-2 border-indigo-500'
+                    ? 'bg-purple-50 border-2 border-purple-500'
                     : 'bg-gray-50 hover:bg-gray-100'
                 }`}
               >
@@ -177,7 +177,7 @@ export const StudentSubmit = () => {
                   value={student.id}
                   checked={selectedStudent === student.id}
                   onChange={() => setSelectedStudent(student.id)}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                  className="h-4 w-4 text-purple-600 focus:ring-purple-500"
                 />
                 <span className="ml-3 text-gray-900">{student.name}</span>
                 {student.student_no && (
@@ -194,7 +194,7 @@ export const StudentSubmit = () => {
 
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-indigo-500"
+            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-purple-500"
           >
             <svg className="mx-auto h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -234,7 +234,7 @@ export const StudentSubmit = () => {
         <button
           onClick={handleSubmit}
           disabled={submitting || !selectedStudent || images.length === 0}
-          className="w-full py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:opacity-90 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {submitting ? '提交中...' : '提交作业'}
         </button>
