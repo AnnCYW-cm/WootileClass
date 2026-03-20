@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToastContext } from '../store/ToastContext';
 
 const API_BASE = '/api';
@@ -47,7 +47,26 @@ export const AILessonPrep = () => {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
 
+  // Curriculum state
+  const [curriculum, setCurriculum] = useState(null);
+  const [selectedVolume, setSelectedVolume] = useState('上册');
+  const [curriculumLoading, setCurriculumLoading] = useState(false);
+
   const subjects = grade ? (subjectsByGrade[grade] || []) : [];
+
+  // Load curriculum when grade + subject change
+  useEffect(() => {
+    if (grade && subject) {
+      setCurriculumLoading(true);
+      fetch(`${API_BASE}/ai/curriculum/${encodeURIComponent(grade)}/${encodeURIComponent(subject)}`)
+        .then(r => r.ok ? r.json() : null)
+        .then(data => setCurriculum(data))
+        .catch(() => setCurriculum(null))
+        .finally(() => setCurriculumLoading(false));
+    } else {
+      setCurriculum(null);
+    }
+  }, [grade, subject]);
 
   const handleGenerate = async () => {
     if (!grade || !subject || !topic.trim()) {
@@ -77,7 +96,14 @@ export const AILessonPrep = () => {
     toast.success('已复制到剪贴板');
   };
 
-  // Simple markdown-like rendering
+  const handleSelectLesson = (lesson) => {
+    setTopic(lesson);
+    toast.info(`已选择：${lesson}`);
+  };
+
+  // Get units for current volume
+  const currentUnits = curriculum?.[selectedVolume] || [];
+
   const renderMarkdown = (text) => {
     if (!text) return null;
     return text.split('\n').map((line, i) => {
@@ -96,7 +122,7 @@ export const AILessonPrep = () => {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">AI 备课助手</h1>
-        <p className="text-gray-500 mt-2">输入课题信息，AI 自动生成教案</p>
+        <p className="text-gray-500 mt-2">选择课文或输入课题，AI 自动生成教案</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -107,7 +133,7 @@ export const AILessonPrep = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">年级 *</label>
               <select
                 value={grade}
-                onChange={(e) => { setGrade(e.target.value); setSubject(''); }}
+                onChange={(e) => { setGrade(e.target.value); setSubject(''); setTopic(''); }}
                 className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
               >
                 <option value="">请选择年级</option>
@@ -119,7 +145,7 @@ export const AILessonPrep = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">学科 *</label>
               <select
                 value={subject}
-                onChange={(e) => setSubject(e.target.value)}
+                onChange={(e) => { setSubject(e.target.value); setTopic(''); }}
                 disabled={!grade}
                 className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white disabled:bg-gray-50"
               >
@@ -128,14 +154,85 @@ export const AILessonPrep = () => {
               </select>
             </div>
 
+            {/* Curriculum Picker */}
+            {curriculum && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">从教材选择课文</label>
+                <div className="flex gap-2 mb-3">
+                  {Object.keys(curriculum).map(vol => (
+                    <button
+                      key={vol}
+                      onClick={() => setSelectedVolume(vol)}
+                      className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
+                        selectedVolume === vol
+                          ? 'bg-purple-100 text-purple-700'
+                          : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                      }`}
+                    >
+                      {vol}
+                    </button>
+                  ))}
+                </div>
+                <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-xl divide-y divide-gray-100">
+                  {currentUnits.map((unit, ui) => (
+                    <div key={ui}>
+                      <div className="px-3 py-2 bg-gray-50 text-xs font-medium text-gray-500">{unit.unit}</div>
+                      {unit.lessons.map((lesson, li) => (
+                        <button
+                          key={li}
+                          onClick={() => handleSelectLesson(lesson)}
+                          className={`w-full text-left px-4 py-2.5 text-sm hover:bg-purple-50 transition flex items-center justify-between group ${
+                            topic === lesson ? 'bg-purple-50 text-purple-700' : 'text-gray-700'
+                          }`}
+                        >
+                          <span>{lesson}</span>
+                          {topic === lesson ? (
+                            <svg className="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          ) : (
+                            <svg className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          )}
+                        </button>
+                      ))}
+                      {unit.extras?.map((extra, ei) => (
+                        <button
+                          key={`e${ei}`}
+                          onClick={() => handleSelectLesson(extra)}
+                          className={`w-full text-left px-4 py-2 text-xs hover:bg-blue-50 transition ${
+                            topic === extra ? 'bg-blue-50 text-blue-600' : 'text-gray-400'
+                          }`}
+                        >
+                          {extra}
+                        </button>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {curriculumLoading && (
+              <p className="text-xs text-gray-400 text-center">正在加载教材目录...</p>
+            )}
+
+            {grade && subject && !curriculum && !curriculumLoading && (
+              <p className="text-xs text-gray-400 text-center">该学科暂无教材目录，请手动输入课题</p>
+            )}
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">课题 *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                课题 *
+                {curriculum && <span className="text-gray-400 font-normal ml-1">（已从教材选择，或手动输入）</span>}
+              </label>
               <input
                 type="text"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 className="block w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="例如：三角形的面积"
+                placeholder={curriculum ? '点击上方课文选择，或手动输入' : '例如：三角形的面积'}
               />
             </div>
 
@@ -237,8 +334,12 @@ export const AILessonPrep = () => {
               </div>
               <h3 className="text-xl font-medium text-gray-900">AI 智能备课</h3>
               <p className="mt-3 text-gray-500 max-w-md mx-auto">
-                填写左侧的课题信息，AI 将自动生成包含教学目标、重难点、教学过程和作业建议的完整教案
+                选择年级和学科后，可直接从教材目录中选择课文生成教案，也可以手动输入任意课题
               </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs text-gray-400">
+                <span className="px-3 py-1 bg-green-50 text-green-600 rounded-full">已收录：一年级语文</span>
+                <span className="px-3 py-1 bg-gray-100 text-gray-500 rounded-full">更多学科持续更新中</span>
+              </div>
             </div>
           )}
         </div>

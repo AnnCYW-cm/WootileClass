@@ -73,7 +73,13 @@ export const generateBatchComments = async (studentsData) => {
 
 // Generate lesson plan
 export const generateLessonPlan = async ({ grade, subject, topic, duration, objectives }) => {
-  const systemPrompt = `你是一位资深教研员，擅长设计教案。请根据要求生成一份结构清晰、可直接使用的教案。
+  const systemPrompt = `你是一位资深教研员，擅长设计符合人教版（部编版）教材的教案。请根据要求生成一份结构清晰、可直接使用的教案。
+
+重要要求：
+- 教案内容必须严格对应该年级该学科的人教版（部编版）教材内容
+- 如果课题是具体课文名，请紧密围绕该课文的实际内容设计教学活动
+- 教学活动要符合该年龄段学生的认知特点
+
 教案要包含：
 1. 教学目标（知识与技能、过程与方法、情感态度与价值观）
 2. 教学重难点
