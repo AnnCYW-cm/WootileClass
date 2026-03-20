@@ -1,29 +1,36 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { classesApi } from '../services/api';
+import { classesApi, dashboardApi } from '../services/api';
 import { useAuth } from '../store/AuthContext';
 
 export const Dashboard = () => {
   const { user } = useAuth();
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [todos, setTodos] = useState(null);
 
   useEffect(() => {
-    loadClasses();
+    loadData();
   }, []);
 
-  const loadClasses = async () => {
+  const loadData = async () => {
     try {
-      const data = await classesApi.getAll();
-      setClasses(data);
+      const [classData, todoData] = await Promise.all([
+        classesApi.getAll(),
+        dashboardApi.getTodos().catch(() => null),
+      ]);
+      setClasses(classData);
+      setTodos(todoData);
     } catch (error) {
-      console.error('Failed to load classes:', error);
+      console.error('Failed to load dashboard:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const totalStudents = classes.reduce((sum, c) => sum + parseInt(c.student_count || 0), 0);
+  const classesWithAttendance = classes.length - (todos?.classes_no_attendance?.length || 0);
+  const attendanceText = classes.length > 0 ? `${classesWithAttendance}/${classes.length}` : '0';
 
   return (
     <div className="space-y-10">
@@ -73,7 +80,7 @@ export const Dashboard = () => {
             </div>
             <div className="ml-6">
               <p className="text-sm font-medium text-gray-400">今日点名</p>
-              <p className="text-4xl font-bold text-gray-900 mt-1">-</p>
+              <p className="text-4xl font-bold text-gray-900 mt-1">{attendanceText}</p>
             </div>
           </div>
         </div>

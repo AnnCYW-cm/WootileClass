@@ -210,6 +210,16 @@ export const animationsApi = {
   seedBuiltin: () => request('/animations/builtin/seed', { method: 'POST' }),
 };
 
+// Dashboard API
+export const dashboardApi = {
+  getTodos: () => request('/dashboard/todos'),
+  getClassSummary: (classId) => request(`/dashboard/class/${classId}/summary`),
+  getAttendanceTrend: (classId) => request(`/dashboard/class/${classId}/attendance-trend`),
+  getScoreRanking: (classId) => request(`/dashboard/class/${classId}/score-ranking`),
+  getAssignmentStats: (classId) => request(`/dashboard/class/${classId}/assignment-stats`),
+  getStudentSummary: (studentId) => request(`/dashboard/student/${studentId}/summary`),
+};
+
 // AI API
 export const aiApi = {
   getStudentComment: (studentId) => request(`/ai/comment/student/${studentId}`),
