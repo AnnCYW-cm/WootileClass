@@ -167,7 +167,7 @@ export const Groups = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
@@ -187,7 +187,7 @@ export const Groups = () => {
         <select
           value={selectedClass}
           onChange={(e) => setSelectedClass(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          className="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-purple-500 focus:border-transparent"
         >
           {classes.map((cls) => (
             <option key={cls.id} value={cls.id}>{cls.name}</option>
@@ -202,7 +202,7 @@ export const Groups = () => {
             onClick={() => setActiveTab('random')}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'random'
-                ? 'border-indigo-500 text-indigo-600'
+                ? 'border-purple-500 text-purple-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
@@ -212,7 +212,7 @@ export const Groups = () => {
             onClick={() => setActiveTab('saved')}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'saved'
-                ? 'border-indigo-500 text-indigo-600'
+                ? 'border-purple-500 text-purple-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
@@ -225,13 +225,13 @@ export const Groups = () => {
       {activeTab === 'random' && (
         <div className="space-y-6">
           {/* Controls */}
-          <div className="bg-white rounded-lg shadow p-4 flex flex-wrap items-center gap-4">
+          <div className="bg-white rounded-2xl shadow p-4 flex flex-wrap items-center gap-4">
             <div className="flex items-center space-x-2">
               <label className="text-sm font-medium text-gray-700">分组数量:</label>
               <select
                 value={groupCount}
                 onChange={(e) => setGroupCount(parseInt(e.target.value))}
-                className="px-3 py-2 border border-gray-300 rounded-md"
+                className="px-3 py-2 border border-gray-200 rounded-xl"
               >
                 {[2, 3, 4, 5, 6, 7, 8].map(n => (
                   <option key={n} value={n}>{n}组</option>
@@ -241,7 +241,7 @@ export const Groups = () => {
             <button
               onClick={generateGroups}
               disabled={isAnimating}
-              className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-400 flex items-center"
+              className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:opacity-90 disabled:bg-gray-400 flex items-center"
             >
               {isAnimating ? (
                 <>
@@ -263,7 +263,7 @@ export const Groups = () => {
             {groups.length > 0 && (
               <button
                 onClick={saveCurrentGroups}
-                className="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-md hover:bg-indigo-50"
+                className="px-4 py-2 border border-purple-500 text-purple-600 rounded-xl hover:bg-purple-50"
               >
                 保存分组
               </button>
@@ -289,7 +289,7 @@ export const Groups = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`rounded-lg border-2 ${group.color} p-4`}
+                    className={`rounded-2xl border-2 ${group.color} p-4`}
                   >
                     <div className="flex justify-between items-center mb-3">
                       <h3 className="font-bold text-lg">{group.name}</h3>
@@ -318,7 +318,7 @@ export const Groups = () => {
           </AnimatePresence>
 
           {groups.length === 0 && !isAnimating && (
-            <div className="bg-white rounded-lg shadow p-12 text-center">
+            <div className="bg-white rounded-2xl shadow p-12 text-center">
               <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
@@ -334,7 +334,7 @@ export const Groups = () => {
         <div className="space-y-4">
           {savedGroups.length > 0 ? (
             savedGroups.map((saved) => (
-              <div key={saved.id} className="bg-white rounded-lg shadow p-4">
+              <div key={saved.id} className="bg-white rounded-2xl shadow p-4">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-medium text-gray-900">{saved.name}</h3>
@@ -345,7 +345,7 @@ export const Groups = () => {
                   <div className="flex space-x-2">
                     <button
                       onClick={() => loadSavedGroup(saved)}
-                      className="px-3 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                      className="px-3 py-1 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:opacity-90"
                     >
                       加载
                     </button>
@@ -367,7 +367,7 @@ export const Groups = () => {
               </div>
             ))
           ) : (
-            <div className="bg-white rounded-lg shadow p-12 text-center">
+            <div className="bg-white rounded-2xl shadow p-12 text-center">
               <p className="text-gray-500">暂无保存的分组</p>
               <p className="text-sm text-gray-400 mt-1">随机分组后可以保存供下次使用</p>
             </div>
@@ -378,7 +378,7 @@ export const Groups = () => {
       {/* Save Modal */}
       {showSaveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
             <h2 className="text-xl font-semibold mb-4">保存分组</h2>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">分组名称</label>
@@ -386,20 +386,20 @@ export const Groups = () => {
                 type="text"
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-purple-500 focus:border-transparent"
                 placeholder="例如：小组讨论分组"
               />
             </div>
             <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={() => setShowSaveModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50"
               >
                 取消
               </button>
               <button
                 onClick={handleSaveGroups}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:opacity-90"
               >
                 保存
               </button>

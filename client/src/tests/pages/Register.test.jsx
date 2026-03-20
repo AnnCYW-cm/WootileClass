@@ -101,7 +101,7 @@ describe('Register', () => {
     await user.type(confirmPasswordInput, '12345');
     await user.click(submitButton);
 
-    expect(screen.getByText('密码长度至少为6位')).toBeInTheDocument();
+    expect(screen.getByText('密码至少需要6个字符')).toBeInTheDocument();
     expect(mockRegister).not.toHaveBeenCalled();
   });
 

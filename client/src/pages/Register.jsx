@@ -102,6 +102,9 @@ export const Register = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              {password && password.length < 6 && (
+                <p className="text-xs text-amber-500 mt-1">密码至少需要6个字符</p>
+              )}
             </div>
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
@@ -117,13 +120,16 @@ export const Register = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
+              {confirmPassword && password !== confirmPassword && (
+                <p className="text-xs text-red-500 mt-1">两次输入的密码不一致</p>
+              )}
             </div>
           </div>
 
           <div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (password && password.length < 6) || (confirmPassword && password !== confirmPassword)}
               className="w-full flex justify-center py-3 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading ? '注册中...' : '注册'}

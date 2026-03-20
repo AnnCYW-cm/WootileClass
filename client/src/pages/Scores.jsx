@@ -245,6 +245,7 @@ export const Scores = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
+        <span className="absolute top-7 right-20 text-white/40 text-sm">按 ESC 退出</span>
         <h1 className="text-5xl font-bold text-white text-center mb-12 relative">积分排行榜</h1>
         <div className="max-w-3xl mx-auto space-y-4 relative">
           {ranking.slice(0, 10).map((student, index) => (

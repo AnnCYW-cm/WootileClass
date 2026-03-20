@@ -147,7 +147,7 @@ export const AssignmentDetail = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
@@ -156,7 +156,7 @@ export const AssignmentDetail = () => {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">作业不存在</p>
-        <Link to="/dashboard/assignments" className="text-indigo-600 hover:text-indigo-500 mt-2 inline-block">
+        <Link to="/dashboard/assignments" className="text-purple-600 hover:text-purple-500 mt-2 inline-block">
           返回作业列表
         </Link>
       </div>
@@ -209,7 +209,7 @@ export const AssignmentDetail = () => {
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm text-gray-500">提交率</div>
-          <div className="text-2xl font-bold text-indigo-600">{statistics?.submissionRate || 0}%</div>
+          <div className="text-2xl font-bold text-purple-600">{statistics?.submissionRate || 0}%</div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm text-gray-500">已批改</div>
@@ -230,7 +230,7 @@ export const AssignmentDetail = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === tab.key
-                  ? 'border-indigo-500 text-indigo-600'
+                  ? 'border-purple-500 text-purple-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -261,7 +261,7 @@ export const AssignmentDetail = () => {
                       {sub.graded_at ? (
                         <div className="flex items-center space-x-2">
                           {sub.score !== null && (
-                            <span className="text-lg font-bold text-indigo-600">{sub.score}分</span>
+                            <span className="text-lg font-bold text-purple-600">{sub.score}分</span>
                           )}
                           {sub.grade && (
                             <span className={`px-2 py-0.5 rounded text-sm font-medium ${getGradeColor(sub.grade)}`}>
@@ -274,7 +274,7 @@ export const AssignmentDetail = () => {
                       )}
                       <button
                         onClick={() => openGradeModal(sub)}
-                        className="px-3 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                        className="px-3 py-1 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded hover:opacity-90"
                       >
                         {sub.graded_at ? '重新批改' : '批改'}
                       </button>
@@ -324,7 +324,7 @@ export const AssignmentDetail = () => {
                   {assignment.type === 'classroom' && (
                     <button
                       onClick={() => openUploadModal(student)}
-                      className="px-3 py-1 text-sm border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-50"
+                      className="px-3 py-1 text-sm border border-purple-600 text-purple-600 rounded hover:bg-purple-50"
                     >
                       上传作业
                     </button>
@@ -348,7 +348,7 @@ export const AssignmentDetail = () => {
             <div className="grid grid-cols-3 gap-6">
               <div>
                 <div className="text-sm text-gray-500">平均分</div>
-                <div className="text-3xl font-bold text-indigo-600">
+                <div className="text-3xl font-bold text-purple-600">
                   {statistics.avgScore || '-'}
                 </div>
               </div>
@@ -383,7 +383,7 @@ export const AssignmentDetail = () => {
                       </span>
                       <div className="flex-1 mx-4 h-6 bg-gray-100 rounded overflow-hidden">
                         <div
-                          className="h-full bg-indigo-500"
+                          className="h-full bg-purple-500"
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
@@ -428,7 +428,7 @@ export const AssignmentDetail = () => {
                     type="number"
                     min="0"
                     max="100"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-transparent"
                     value={gradeForm.score}
                     onChange={(e) => setGradeForm({ ...gradeForm, score: e.target.value })}
                     placeholder="0-100"
@@ -459,7 +459,7 @@ export const AssignmentDetail = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">评语</label>
                 <textarea
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-transparent"
                   value={gradeForm.comment}
                   onChange={(e) => setGradeForm({ ...gradeForm, comment: e.target.value })}
                   placeholder="填写评语（选填）"
@@ -493,7 +493,7 @@ export const AssignmentDetail = () => {
                   <button
                     type="button"
                     onClick={handleAddComment}
-                    className="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                    className="px-3 py-1 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:opacity-90"
                   >
                     添加
                   </button>
@@ -510,7 +510,7 @@ export const AssignmentDetail = () => {
               </button>
               <button
                 onClick={handleGrade}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:opacity-90"
               >
                 保存批改
               </button>
@@ -530,7 +530,7 @@ export const AssignmentDetail = () => {
             <div className="space-y-4">
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-500"
+                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-purple-500"
               >
                 <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -574,7 +574,7 @@ export const AssignmentDetail = () => {
               <button
                 onClick={handleUpload}
                 disabled={uploadImages.length === 0}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-400"
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:opacity-90 disabled:bg-gray-400"
               >
                 上传
               </button>
@@ -589,12 +589,12 @@ export const AssignmentDetail = () => {
           <div className="bg-white rounded-lg p-6 w-full max-w-md text-center">
             <h2 className="text-xl font-semibold mb-4">作业提交码</h2>
             <div className="bg-gray-100 p-8 rounded-lg mb-4">
-              <div className="text-4xl font-mono font-bold text-indigo-600 tracking-wider">
+              <div className="text-4xl font-mono font-bold text-purple-600 tracking-wider">
                 {assignment.submit_code}
               </div>
             </div>
             <p className="text-gray-600 mb-2">学生访问链接:</p>
-            <p className="text-sm text-indigo-600 bg-indigo-50 p-2 rounded break-all">
+            <p className="text-sm text-purple-600 bg-purple-50 p-2 rounded break-all">
               {window.location.origin}/submit/{assignment.submit_code}
             </p>
             <p className="text-xs text-gray-500 mt-4">
@@ -602,7 +602,7 @@ export const AssignmentDetail = () => {
             </p>
             <button
               onClick={() => setShowQRModal(false)}
-              className="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+              className="mt-6 px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:opacity-90"
             >
               关闭
             </button>

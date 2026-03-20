@@ -14,6 +14,7 @@ export const DataDashboard = () => {
   const [assignmentStats, setAssignmentStats] = useState([]);
   const [todos, setTodos] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [period, setPeriod] = useState('week');
   const [aiSummary, setAiSummary] = useState('');
   const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
@@ -41,6 +42,7 @@ export const DataDashboard = () => {
       }
     } catch (error) {
       console.error('获取班级失败:', error);
+      setError('获取班级列表失败，请检查网络连接');
     }
   };
 
@@ -58,6 +60,7 @@ export const DataDashboard = () => {
 
   const fetchDashboardData = async () => {
     setLoading(true);
+    setError(null);
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
@@ -75,6 +78,7 @@ export const DataDashboard = () => {
       setAssignmentStats(await assignmentRes.json());
     } catch (error) {
       console.error('获取看板数据失败:', error);
+      setError('获取看板数据失败，请稍后重试');
     } finally {
       setLoading(false);
     }
@@ -172,6 +176,16 @@ export const DataDashboard = () => {
               </span>
             )}
           </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 text-red-600 p-6 rounded-2xl border border-red-100 text-center">
+          <p className="font-medium">数据加载失败</p>
+          <p className="text-sm mt-1">{error}</p>
+          <button onClick={() => { setError(null); fetchDashboardData(); }} className="mt-3 px-4 py-2 bg-red-100 text-red-700 rounded-xl text-sm hover:bg-red-200 transition">
+            重试
+          </button>
         </div>
       )}
 
