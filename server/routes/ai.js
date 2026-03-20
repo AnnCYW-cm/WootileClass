@@ -3,6 +3,7 @@ import multer from 'multer';
 import { authMiddleware as authenticate } from '../middleware/auth.js';
 import { getStudentComment, getLessonPlan, getClassSummary, uploadPPT } from '../controllers/aiController.js';
 import { getCurriculum, getAvailableCurriculum } from '../config/curriculum.js';
+import { query as dbQuery } from '../db/index.js';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/ppt/', limits: { fileSize: 50 * 1024 * 1024 } });
@@ -28,9 +29,10 @@ router.post('/upload-ppt', upload.single('ppt'), uploadPPT);
 router.get('/related-animations/:grade/:subject', async (req, res) => {
   try {
     const { grade, subject } = req.params;
-    const { query: dbQuery } = await import('../db/index.js');
     const result = await dbQuery(
-      `SELECT c.id, c.title, c.description, c.cover_image, c.section_count, c.animation_count, c.status
+      `SELECT c.id, c.title, c.description, c.cover_image, c.status, c.view_count,
+              (SELECT COUNT(*) FROM course_sections cs WHERE cs.course_id = c.id) as section_count,
+              (SELECT COUNT(*) FROM animations a JOIN course_sections cs2 ON a.section_id = cs2.id WHERE cs2.course_id = c.id) as animation_count
        FROM courses c
        WHERE c.grade = $1 AND (c.subject = $2 OR c.subject IS NULL)
        AND c.status = 'published'
@@ -40,7 +42,8 @@ router.get('/related-animations/:grade/:subject', async (req, res) => {
     );
     res.json(result.rows);
   } catch (error) {
-    res.status(500).json({ error: '获取相关动画失败' });
+    console.error('Related animations error:', error);
+    res.status(500).json({ error: '获取相关动画失败: ' + error.message });
   }
 });
 
