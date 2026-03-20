@@ -72,7 +72,7 @@ export const generateBatchComments = async (studentsData) => {
 };
 
 // Generate lesson plan
-export const generateLessonPlan = async ({ grade, subject, topic, duration, objectives }) => {
+export const generateLessonPlan = async ({ grade, subject, topic, duration, objectives, pptContent }) => {
   const systemPrompt = `你是一位资深教研员，擅长设计符合人教版（部编版）教材的教案。请根据要求生成一份结构清晰、可直接使用的教案。
 
 重要要求：
@@ -93,7 +93,7 @@ export const generateLessonPlan = async ({ grade, subject, topic, duration, obje
 学科：${subject}
 课题：${topic}
 课时：${duration || '40分钟'}
-${objectives ? `教学目标要求：${objectives}` : ''}
+${objectives ? `教学目标要求：${objectives}` : ''}${pptContent ? `\n老师已有PPT课件内容：\n${pptContent}\n\n请基于以上PPT内容设计教案，保持与课件的衔接和一致性。` : ''}
 
 请生成教案：`;
 

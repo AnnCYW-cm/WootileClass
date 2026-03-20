@@ -47,6 +47,15 @@ export const AILessonPrep = () => {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
 
+  // PPT upload state
+  const [pptContent, setPptContent] = useState('');
+  const [pptFileName, setPptFileName] = useState('');
+  const [pptUploading, setPptUploading] = useState(false);
+  const [pptSlides, setPptSlides] = useState(0);
+
+  // Related animations
+  const [relatedAnimations, setRelatedAnimations] = useState([]);
+
   // Curriculum state
   const [curriculum, setCurriculum] = useState(null);
   const [selectedVolume, setSelectedVolume] = useState('上册');
@@ -63,10 +72,54 @@ export const AILessonPrep = () => {
         .then(data => setCurriculum(data))
         .catch(() => setCurriculum(null))
         .finally(() => setCurriculumLoading(false));
+
+      // Also load related animations
+      fetch(`${API_BASE}/ai/related-animations/${encodeURIComponent(grade)}/${encodeURIComponent(subject)}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      })
+        .then(r => r.ok ? r.json() : [])
+        .then(data => setRelatedAnimations(data))
+        .catch(() => setRelatedAnimations([]));
     } else {
       setCurriculum(null);
+      setRelatedAnimations([]);
     }
   }, [grade, subject]);
+
+  const handlePPTUpload = async (file) => {
+    if (!file) return;
+    if (!file.name.endsWith('.pptx')) {
+      toast.warning('仅支持 .pptx 格式');
+      return;
+    }
+    setPptUploading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('ppt', file);
+      const response = await fetch(`${API_BASE}/ai/upload-ppt`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+      setPptContent(data.content);
+      setPptFileName(file.name);
+      setPptSlides(data.slides);
+      toast.success(`已解析 ${data.slides} 页PPT`);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setPptUploading(false);
+    }
+  };
+
+  const clearPPT = () => {
+    setPptContent('');
+    setPptFileName('');
+    setPptSlides(0);
+  };
 
   const handleGenerate = async () => {
     if (!grade || !subject || !topic.trim()) {
@@ -79,7 +132,7 @@ export const AILessonPrep = () => {
     try {
       const data = await request('/ai/lesson-plan', {
         method: 'POST',
-        body: JSON.stringify({ grade, subject, topic, duration, objectives }),
+        body: JSON.stringify({ grade, subject, topic, duration, objectives, pptContent: pptContent || undefined }),
       });
       setResult(data.plan);
       setHistory(prev => [{ grade, subject, topic, plan: data.plan, time: new Date() }, ...prev.slice(0, 9)]);
@@ -222,6 +275,62 @@ export const AILessonPrep = () => {
               <p className="text-xs text-gray-400 text-center">该学科暂无教材目录，请手动输入课题</p>
             )}
 
+            {/* PPT Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">上传课件（选填）</label>
+              {pptFileName ? (
+                <div className="flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                  <svg className="w-8 h-8 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-blue-800 truncate">{pptFileName}</p>
+                    <p className="text-xs text-blue-500">{pptSlides} 页已解析</p>
+                  </div>
+                  <button onClick={clearPPT} className="p-1 text-blue-400 hover:text-blue-600">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ) : (
+                <label className={`flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-xl cursor-pointer transition ${
+                  pptUploading ? 'border-blue-300 bg-blue-50' : 'border-gray-200 hover:border-purple-300 hover:bg-purple-50'
+                }`}>
+                  {pptUploading ? (
+                    <>
+                      <svg className="animate-spin w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      <span className="text-sm text-blue-500">解析中...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      <span className="text-sm text-gray-500">上传 PPT 课件</span>
+                      <span className="text-xs text-gray-400">(.pptx)</span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept=".pptx"
+                    className="hidden"
+                    onChange={(e) => {
+                      handlePPTUpload(e.target.files?.[0]);
+                      e.target.value = '';
+                    }}
+                    disabled={pptUploading}
+                  />
+                </label>
+              )}
+              {pptContent && (
+                <p className="text-xs text-gray-400 mt-1">AI 将基于您的课件内容生成配套教案</p>
+              )}
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 课题 *
@@ -339,6 +448,49 @@ export const AILessonPrep = () => {
               <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs text-gray-400">
                 <span className="px-3 py-1 bg-green-50 text-green-600 rounded-full">已收录：一年级语文</span>
                 <span className="px-3 py-1 bg-gray-100 text-gray-500 rounded-full">更多学科持续更新中</span>
+              </div>
+            </div>
+          )}
+
+          {/* Related Animations */}
+          {relatedAnimations.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-6">
+              <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                相关课程动画
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {relatedAnimations.map(anim => (
+                  <a
+                    key={anim.id}
+                    href={`/dashboard/courses/${anim.id}/play`}
+                    className="group block rounded-xl border border-gray-100 overflow-hidden hover:shadow-md hover:border-purple-200 transition"
+                  >
+                    <div className="aspect-video bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center relative">
+                      {anim.cover_image ? (
+                        <img src={anim.cover_image} alt={anim.title} className="w-full h-full object-cover" />
+                      ) : (
+                        <svg className="w-8 h-8 text-white/60" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      )}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition transform scale-75 group-hover:scale-100">
+                          <svg className="w-5 h-5 text-purple-600 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-3">
+                      <p className="text-sm font-medium text-gray-900 truncate">{anim.title}</p>
+                      <p className="text-xs text-gray-400 mt-1">{anim.animation_count || 0} 个动画</p>
+                    </div>
+                  </a>
+                ))}
               </div>
             </div>
           )}

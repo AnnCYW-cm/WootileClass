@@ -103,13 +103,13 @@ export const getStudentComment = async (req, res) => {
 // Generate lesson plan
 export const getLessonPlan = async (req, res) => {
   try {
-    const { grade, subject, topic, duration, objectives } = req.body;
+    const { grade, subject, topic, duration, objectives, pptContent } = req.body;
 
     if (!grade || !subject || !topic) {
       return res.status(400).json({ error: '请填写年级、学科和课题' });
     }
 
-    const plan = await generateLessonPlan({ grade, subject, topic, duration, objectives });
+    const plan = await generateLessonPlan({ grade, subject, topic, duration, objectives, pptContent });
     res.json({ plan });
   } catch (error) {
     console.error('AI lesson plan error:', error);
@@ -117,6 +117,66 @@ export const getLessonPlan = async (req, res) => {
       return res.status(503).json({ error: 'AI 服务暂时不可用，请检查 AI_API_KEY 配置' });
     }
     res.status(500).json({ error: '生成教案失败：' + error.message });
+  }
+};
+
+// Upload PPT and extract text content
+export const uploadPPT = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: '请上传PPT文件' });
+    }
+
+    const AdmZip = (await import('adm-zip')).default;
+    const path = await import('path');
+    const fs = await import('fs');
+
+    const filePath = req.file.path;
+    const ext = path.default.extname(req.file.originalname).toLowerCase();
+
+    if (ext !== '.pptx') {
+      fs.default.unlinkSync(filePath);
+      return res.status(400).json({ error: '仅支持 .pptx 格式的PPT文件' });
+    }
+
+    // Extract text from PPTX
+    const zip = new AdmZip(filePath);
+    const entries = zip.getEntries();
+    let slideTexts = [];
+
+    entries.forEach(entry => {
+      if (entry.entryName.match(/ppt\/slides\/slide\d+\.xml$/)) {
+        const xml = entry.getData().toString('utf8');
+        // Extract text between <a:t> tags
+        const texts = [];
+        const regex = /<a:t>([^<]*)<\/a:t>/g;
+        let match;
+        while ((match = regex.exec(xml)) !== null) {
+          if (match[1].trim()) texts.push(match[1].trim());
+        }
+        if (texts.length > 0) {
+          const slideNum = entry.entryName.match(/slide(\d+)/)[1];
+          slideTexts.push({ slide: parseInt(slideNum), text: texts.join(' ') });
+        }
+      }
+    });
+
+    // Sort by slide number
+    slideTexts.sort((a, b) => a.slide - b.slide);
+
+    // Clean up uploaded file
+    fs.default.unlinkSync(filePath);
+
+    const fullText = slideTexts.map(s => `[第${s.slide}页] ${s.text}`).join('\n');
+
+    res.json({
+      slides: slideTexts.length,
+      content: fullText,
+      slideDetails: slideTexts,
+    });
+  } catch (error) {
+    console.error('PPT upload error:', error);
+    res.status(500).json({ error: '解析PPT失败：' + error.message });
   }
 };
 
