@@ -336,7 +336,8 @@ export const Scores = () => {
             <button
               key={preset.id}
               onClick={() => selectedStudent && handleQuickScore(selectedStudent, preset)}
-              className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              disabled={!selectedStudent}
+              className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
                 preset.score > 0
                   ? 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200'
                   : 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'
@@ -346,7 +347,11 @@ export const Scores = () => {
             </button>
           ))}
         </div>
-        <p className="text-xs text-gray-400 mt-4">提示：先点击学生卡片选中，再点击快捷加分</p>
+        <p className="text-xs text-gray-400 mt-4">
+          {selectedStudent
+            ? <span className="text-purple-600">已选中：{selectedStudent.name}，点击快捷加分</span>
+            : '提示：先点击下方学生卡片选中，再使用快捷加分'}
+        </p>
       </div>
 
       {/* Manage Tab */}

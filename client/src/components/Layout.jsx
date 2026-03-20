@@ -1,5 +1,5 @@
 import { useState, createContext, useContext } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../store/AuthContext';
 
 // Theme Context
@@ -82,6 +82,20 @@ export const PublicLayout = () => {
 export const DashboardLayout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
+  const isDashboardActive = location.pathname === '/dashboard';
+
+  const teachingPaths = ['/dashboard/rollcall', '/dashboard/scores', '/dashboard/assignments', '/dashboard/exams'];
+  const resourcePaths = ['/dashboard/courses', '/dashboard/videos', '/dashboard/ai-prep'];
+  const toolsPaths = ['/dashboard/tools', '/dashboard/groups', '/dashboard/seating'];
+  const dataPaths = ['/dashboard/data', '/dashboard/export', '/dashboard/reports', '/dashboard/statistics'];
+
+  const isTeachingActive = teachingPaths.some(p => isActive(p));
+  const isResourceActive = resourcePaths.some(p => isActive(p));
+  const isToolsActive = toolsPaths.some(p => isActive(p));
+  const isDataActive = dataPaths.some(p => isActive(p));
+
   const [showTeachingMenu, setShowTeachingMenu] = useState(false);
   const [showResourceMenu, setShowResourceMenu] = useState(false);
   const [showToolsMenu, setShowToolsMenu] = useState(false);
@@ -125,13 +139,13 @@ export const DashboardLayout = () => {
               <div className="hidden md:flex space-x-1">
                 <Link
                   to="/dashboard"
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isDashboardActive ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'}`}
                 >
                   工作台
                 </Link>
                 <Link
                   to="/dashboard/classes"
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/dashboard/classes') ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'}`}
                 >
                   班级管理
                 </Link>
@@ -140,7 +154,7 @@ export const DashboardLayout = () => {
                   <button
                     onClick={() => setShowTeachingMenu(!showTeachingMenu)}
                     onBlur={() => setTimeout(() => setShowTeachingMenu(false), 200)}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors flex items-center"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center ${isTeachingActive ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'}`}
                   >
                     教学管理
                     <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,7 +175,7 @@ export const DashboardLayout = () => {
                   <button
                     onClick={() => setShowResourceMenu(!showResourceMenu)}
                     onBlur={() => setTimeout(() => setShowResourceMenu(false), 200)}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors flex items-center"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center ${isResourceActive ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'}`}
                   >
                     教学资源
                     <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,7 +195,7 @@ export const DashboardLayout = () => {
                   <button
                     onClick={() => setShowToolsMenu(!showToolsMenu)}
                     onBlur={() => setTimeout(() => setShowToolsMenu(false), 200)}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors flex items-center"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center ${isToolsActive ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'}`}
                   >
                     课堂工具
                     <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -201,7 +215,7 @@ export const DashboardLayout = () => {
                   <button
                     onClick={() => setShowDataMenu(!showDataMenu)}
                     onBlur={() => setTimeout(() => setShowDataMenu(false), 200)}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors flex items-center"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center ${isDataActive ? 'text-purple-600 bg-purple-50' : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'}`}
                   >
                     数据报表
                     <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
