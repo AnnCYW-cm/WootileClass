@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useToastContext } from '../store/ToastContext';
 
 export const SeatingChart = () => {
+  const toast = useToastContext();
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState('');
   const [students, setStudents] = useState([]);
@@ -134,11 +136,11 @@ export const SeatingChart = () => {
         body: JSON.stringify({ assignments: seats })
       });
       if (res.ok) {
-        alert('保存成功');
+        toast.success('保存成功');
       }
     } catch (error) {
       console.error('保存失败:', error);
-      alert('保存失败');
+      toast.error('保存失败');
     } finally {
       setSaving(false);
     }

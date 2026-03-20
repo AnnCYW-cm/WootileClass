@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Membership from '../../pages/Membership';
+import { ToastProvider } from '../../store/ToastContext';
 import * as api from '../../services/api';
 
 // Mock API
@@ -48,7 +49,9 @@ const mockPremiumStatus = {
 const renderMembership = () => {
   return render(
     <MemoryRouter>
-      <Membership />
+      <ToastProvider>
+        <Membership />
+      </ToastProvider>
     </MemoryRouter>
   );
 };
@@ -175,7 +178,6 @@ describe('Membership', () => {
 
     it('should show error on purchase failure', async () => {
       const user = userEvent.setup();
-      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
       api.membershipApi.purchase.mockRejectedValueOnce(new Error('支付失败'));
 
       renderMembership();
@@ -187,11 +189,10 @@ describe('Membership', () => {
       await user.click(screen.getByText('立即开通'));
       await user.click(screen.getByText('确认支付'));
 
+      // Error is now shown via toast notification instead of alert
       await waitFor(() => {
-        expect(alertSpy).toHaveBeenCalledWith('支付失败');
+        expect(screen.getByText('支付失败')).toBeInTheDocument();
       });
-
-      alertSpy.mockRestore();
     });
   });
 

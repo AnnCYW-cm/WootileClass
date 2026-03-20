@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useToastContext } from '../store/ToastContext';
 
 export const DataExport = () => {
+  const toast = useToastContext();
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState('');
   const [exportType, setExportType] = useState('students');
@@ -102,7 +104,7 @@ export const DataExport = () => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('导出失败:', error);
-      alert('导出失败，请重试');
+      toast.error('导出失败，请重试');
     } finally {
       setExporting(false);
     }

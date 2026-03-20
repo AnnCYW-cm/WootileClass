@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useToastContext } from '../store/ToastContext';
 
 export const ClassroomTools = () => {
   const [activeTool, setActiveTool] = useState('timer');
@@ -361,6 +362,7 @@ const TimerTool = () => {
 
 // Noise Monitor Component
 const NoiseMonitor = () => {
+  const toast = useToastContext();
   const [isListening, setIsListening] = useState(false);
   const [volume, setVolume] = useState(0);
   const [threshold, setThreshold] = useState(70);
@@ -387,7 +389,7 @@ const NoiseMonitor = () => {
       setIsListening(true);
       checkVolume();
     } catch (error) {
-      alert('无法访问麦克风，请检查浏览器权限设置');
+      toast.error('无法访问麦克风，请检查浏览器权限设置');
       console.error('Microphone error:', error);
     }
   };

@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { assignmentsApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export const AssignmentDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const toast = useToastContext();
 
   const [assignment, setAssignment] = useState(null);
   const [submissions, setSubmissions] = useState([]);
@@ -49,7 +51,7 @@ export const AssignmentDetail = () => {
       setQuickComments(commentsData);
     } catch (error) {
       console.error('Failed to load data:', error);
-      alert('加载失败: ' + error.message);
+      toast.error('加载失败: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -73,7 +75,7 @@ export const AssignmentDetail = () => {
       setShowGradeModal(false);
       loadData();
     } catch (error) {
-      alert('批改失败: ' + error.message);
+      toast.error('批改失败: ' + error.message);
     }
   };
 
@@ -104,7 +106,7 @@ export const AssignmentDetail = () => {
       setShowUploadModal(false);
       loadData();
     } catch (error) {
-      alert('上传失败: ' + error.message);
+      toast.error('上传失败: ' + error.message);
     }
   };
 
@@ -117,7 +119,7 @@ export const AssignmentDetail = () => {
       const comments = await assignmentsApi.getQuickComments();
       setQuickComments(comments);
     } catch (error) {
-      alert('添加失败: ' + error.message);
+      toast.error('添加失败: ' + error.message);
     }
   };
 
@@ -127,7 +129,7 @@ export const AssignmentDetail = () => {
       const comments = await assignmentsApi.getQuickComments();
       setQuickComments(comments);
     } catch (error) {
-      alert('删除失败: ' + error.message);
+      toast.error('删除失败: ' + error.message);
     }
   };
 

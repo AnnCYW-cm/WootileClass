@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { coursesApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export const CoursePlayer = () => {
   const { id } = useParams();
+  const toast = useToastContext();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -67,7 +69,7 @@ export const CoursePlayer = () => {
       setComments([comment, ...comments]);
       setNewComment('');
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setSubmittingComment(false);
     }
@@ -80,7 +82,7 @@ export const CoursePlayer = () => {
       await coursesApi.deleteComment(id, commentId);
       setComments(comments.filter(c => c.id !== commentId));
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -149,7 +151,7 @@ export const CoursePlayer = () => {
                 onClick={() => {
                   const link = `${window.location.origin}/learn/${course.share_code}`;
                   navigator.clipboard.writeText(link);
-                  alert('分享链接已复制');
+                  toast.success('分享链接已复制');
                 }}
                 className="flex items-center gap-2 px-6 py-2.5 text-gray-700 hover:bg-gray-100 rounded-full transition-colors text-base"
               >
@@ -159,15 +161,6 @@ export const CoursePlayer = () => {
                 <span className="font-medium">分享</span>
               </button>
             )}
-            <Link
-              to={`/dashboard/courses/${id}/edit`}
-              className="flex items-center gap-2 px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors text-base"
-            >
-              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              <span className="font-medium text-gray-700">编辑课程</span>
-            </Link>
           </div>
         </div>
       </header>
@@ -384,13 +377,7 @@ export const CoursePlayer = () => {
 
               {allAnimations.length === 0 && (
                 <div className="p-8 text-center text-gray-500 text-sm">
-                  <p>暂无动画</p>
-                  <Link
-                    to={`/dashboard/courses/${id}/edit`}
-                    className="inline-block mt-2 text-blue-600 hover:underline"
-                  >
-                    添加动画
-                  </Link>
+                  <p>暂无动画内容</p>
                 </div>
               )}
             </div>

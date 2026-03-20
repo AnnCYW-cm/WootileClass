@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { examsApi, studentsApi } from '../services/api';
 import { useLoadClasses, useModal } from '../hooks';
+import { useToastContext } from '../store/ToastContext';
 
 export const ExamManagement = () => {
+  const toast = useToastContext();
   const { classes, selectedClassId, selectClass } = useLoadClasses();
   const [exams, setExams] = useState([]);
   const [students, setStudents] = useState([]);
@@ -112,10 +114,10 @@ export const ExamManagement = () => {
       setShowScoreModal(false);
       fetchScores();
       fetchStats();
-      alert('成绩保存成功');
+      toast.success('成绩保存成功');
     } catch (error) {
       console.error('保存成绩失败:', error);
-      alert('保存失败');
+      toast.error('保存失败');
     }
   };
 

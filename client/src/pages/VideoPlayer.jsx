@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { videosApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export const VideoPlayer = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const toast = useToastContext();
   const [video, setVideo] = useState(null);
   const [relatedVideos, setRelatedVideos] = useState([]);
   const [comments, setComments] = useState([]);
@@ -104,7 +106,7 @@ export const VideoPlayer = () => {
       const data = await videosApi.getComments(id);
       setComments(data);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setSubmitting(false);
     }
@@ -126,7 +128,7 @@ export const VideoPlayer = () => {
       }]);
       setNewDanmaku('');
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -137,7 +139,7 @@ export const VideoPlayer = () => {
       const data = await videosApi.getComments(id);
       setComments(data);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setDeleteConfirm(null);
     }
@@ -289,7 +291,7 @@ export const VideoPlayer = () => {
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(`${window.location.origin}/video/${video.share_code}`);
-                    alert('链接已复制');
+                    toast.success('链接已复制');
                   }}
                   className="text-sm text-blue-600 hover:text-blue-700"
                 >

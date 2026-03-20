@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { membershipApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export default function Membership() {
+  const toast = useToastContext();
   const [plans, setPlans] = useState({});
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -48,7 +50,7 @@ export default function Membership() {
       setStatus(newStatus);
       setShowSuccess(true);
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     } finally {
       setPurchasing(false);
     }

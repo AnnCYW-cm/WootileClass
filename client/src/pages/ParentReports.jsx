@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { classesApi, studentsApi, reportsApi } from '../services/api';
 import { useLoadClasses } from '../hooks';
+import { useToastContext } from '../store/ToastContext';
 
 export const ParentReports = () => {
+  const toast = useToastContext();
   const { classes, selectedClassId, selectClass } = useLoadClasses();
   const [students, setStudents] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
@@ -93,11 +95,12 @@ export const ParentReports = () => {
         include_exams: reportSettings.include_exams,
         teacher_comment: reportSettings.teacher_comment
       });
-      alert(`报告已生成！\n分享链接：${window.location.origin}/report/${data.share_code}`);
-      copyToClipboard(`${window.location.origin}/report/${data.share_code}`);
+      const url = `${window.location.origin}/report/${data.share_code}`;
+      navigator.clipboard.writeText(url);
+      toast.success('报告已生成！分享链接已复制到剪贴板');
     } catch (error) {
       console.error('生成失败:', error);
-      alert('生成失败');
+      toast.error('生成失败');
     } finally {
       setGenerating(false);
     }
@@ -105,7 +108,7 @@ export const ParentReports = () => {
 
   const handleBatchGenerate = async () => {
     if (selectedStudents.length === 0) {
-      alert('请先选择学生');
+      toast.warning('请先选择学生');
       return;
     }
     setGenerating(true);
@@ -119,11 +122,11 @@ export const ParentReports = () => {
         include_exams: reportSettings.include_exams,
         teacher_comment: reportSettings.teacher_comment
       });
-      alert(`成功生成 ${data.reports.length} 份报告！`);
+      toast.success(`成功生成 ${data.reports.length} 份报告！`);
       setSelectedStudents([]);
     } catch (error) {
       console.error('批量生成失败:', error);
-      alert('批量生成失败');
+      toast.error('批量生成失败');
     } finally {
       setGenerating(false);
     }
@@ -530,7 +533,7 @@ export const ParentReports = () => {
                         onClick={() => {
                           const url = `${window.location.origin}/report/${report.share_code}`;
                           copyToClipboard(url);
-                          alert('链接已复制');
+                          toast.success('链接已复制');
                         }}
                         className="px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
                       >

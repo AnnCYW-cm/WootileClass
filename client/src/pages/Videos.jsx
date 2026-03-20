@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { videosApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export const Videos = () => {
+  const toast = useToastContext();
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -88,7 +90,7 @@ export const Videos = () => {
       loadVideos();
       loadStorageUsage();
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -101,14 +103,14 @@ export const Videos = () => {
       }
       loadVideos();
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
   const copyShareLink = (shareCode) => {
     const link = `${window.location.origin}/video/${shareCode}`;
     navigator.clipboard.writeText(link);
-    alert('分享链接已复制到剪贴板');
+    toast.success('分享链接已复制到剪贴板');
   };
 
   const formatFileSize = (bytes) => {

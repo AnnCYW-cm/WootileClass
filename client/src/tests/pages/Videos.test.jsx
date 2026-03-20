@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Videos } from '../../pages/Videos';
+import { ToastProvider } from '../../store/ToastContext';
 import * as api from '../../services/api';
 
 // Mock API
@@ -62,7 +63,9 @@ const mockStorageUsage = {
 const renderVideos = () => {
   return render(
     <MemoryRouter>
-      <Videos />
+      <ToastProvider>
+        <Videos />
+      </ToastProvider>
     </MemoryRouter>
   );
 };

@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { classesApi, studentsApi, scoresApi, redemptionApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 const REWARD_ICONS = ['🎁', '🏆', '⭐', '🎮', '📚', '🍬', '🎯', '🎪', '🎨', '🎵', '🎫', '🍕'];
 
 export default function Redemption() {
   const { classId } = useParams();
   const navigate = useNavigate();
+  const toast = useToastContext();
   const [currentClass, setCurrentClass] = useState(null);
   const [students, setStudents] = useState([]);
   const [rewards, setRewards] = useState([]);
@@ -69,7 +71,7 @@ export default function Redemption() {
       setFormData({ name: '', description: '', points_required: 10, icon: '🎁', stock: -1 });
       loadData();
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -91,7 +93,7 @@ export default function Redemption() {
       await redemptionApi.deleteReward(id);
       loadData();
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -107,13 +109,13 @@ export default function Redemption() {
         student_id: selectedStudent.id,
         reward_id: selectedReward.id
       });
-      alert('兑换成功！');
+      toast.success('兑换成功！');
       setShowRedeemModal(false);
       setSelectedStudent(null);
       setSelectedReward(null);
       loadData();
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 

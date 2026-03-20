@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { assignmentsApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export const StudentSubmit = () => {
   const { code } = useParams();
   const fileInputRef = useRef(null);
+  const toast = useToastContext();
 
   const [assignment, setAssignment] = useState(null);
   const [students, setStudents] = useState([]);
@@ -48,11 +50,11 @@ export const StudentSubmit = () => {
 
   const handleSubmit = async () => {
     if (!selectedStudent) {
-      alert('请选择你的姓名');
+      toast.warning('请选择你的姓名');
       return;
     }
     if (images.length === 0) {
-      alert('请上传作业图片');
+      toast.warning('请上传作业图片');
       return;
     }
 
@@ -68,7 +70,7 @@ export const StudentSubmit = () => {
       });
       setSubmitted(true);
     } catch (err) {
-      alert(err.message || '提交失败');
+      toast.error(err.message || '提交失败');
     } finally {
       setSubmitting(false);
     }

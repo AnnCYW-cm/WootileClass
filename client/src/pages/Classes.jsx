@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { classesApi, membershipApi } from '../services/api';
 import { useLoadClasses, useModal } from '../hooks';
+import { useToastContext } from '../store/ToastContext';
 
 export const Classes = () => {
+  const toast = useToastContext();
   const { classes, activeClasses, archivedClasses, loading, reload } = useLoadClasses();
   const [showArchived, setShowArchived] = useState(false);
   const [usageStats, setUsageStats] = useState(null);
@@ -45,7 +47,7 @@ export const Classes = () => {
       await classesApi.delete(id);
       reload();
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -57,7 +59,7 @@ export const Classes = () => {
       await classesApi.archive(cls.id);
       reload();
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 

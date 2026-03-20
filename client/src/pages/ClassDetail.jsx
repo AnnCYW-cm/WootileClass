@@ -2,9 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { classesApi } from '../services/api';
 import { useLoadStudents, useModal } from '../hooks';
+import { useToastContext } from '../store/ToastContext';
 
 export const ClassDetail = () => {
   const { id } = useParams();
+  const toast = useToastContext();
   const [classInfo, setClassInfo] = useState(null);
   const [classLoading, setClassLoading] = useState(true);
   const [importing, setImporting] = useState(false);
@@ -49,7 +51,7 @@ export const ClassDetail = () => {
     try {
       await deleteStudent(studentId);
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -58,16 +60,16 @@ export const ClassDetail = () => {
     if (!file) return;
 
     if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-      alert('请上传Excel文件（.xlsx或.xls）');
+      toast.warning('请上传Excel文件（.xlsx或.xls）');
       return;
     }
 
     setImporting(true);
     try {
       const result = await importStudents(file);
-      alert(result.message);
+      toast.success(result.message);
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     } finally {
       setImporting(false);
       if (fileInputRef.current) {

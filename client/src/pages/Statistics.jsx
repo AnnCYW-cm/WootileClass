@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { classesApi, attendanceApi, scoresApi, assignmentsApi } from '../services/api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
+import { useToastContext } from '../store/ToastContext';
 
 export const Statistics = () => {
+  const toast = useToastContext();
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState('');
   const [activeTab, setActiveTab] = useState('attendance');
@@ -67,7 +69,7 @@ export const Statistics = () => {
 
   const exportToCSV = (data, filename) => {
     if (!data || data.length === 0) {
-      alert('没有数据可导出');
+      toast.warning('没有数据可导出');
       return;
     }
 
