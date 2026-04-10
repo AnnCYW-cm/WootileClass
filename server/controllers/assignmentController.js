@@ -35,7 +35,6 @@ export const getAssignments = async (req, res) => {
     const result = await query(queryText, params);
     res.json(result.rows);
   } catch (error) {
-    console.error('Get assignments error:', error);
     res.status(500).json({ error: '获取作业列表失败' });
   }
 };
@@ -60,7 +59,6 @@ export const getAssignment = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Get assignment error:', error);
     res.status(500).json({ error: '获取作业详情失败' });
   }
 };
@@ -90,7 +88,6 @@ export const createAssignment = async (req, res) => {
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Create assignment error:', error);
     res.status(500).json({ error: '创建作业失败' });
   }
 };
@@ -121,7 +118,6 @@ export const updateAssignment = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Update assignment error:', error);
     res.status(500).json({ error: '更新作业失败' });
   }
 };
@@ -140,7 +136,6 @@ export const deleteAssignment = async (req, res) => {
     await query('DELETE FROM assignments WHERE id = $1', [id]);
     res.json({ message: '作业已删除' });
   } catch (error) {
-    console.error('Delete assignment error:', error);
     res.status(500).json({ error: '删除作业失败' });
   }
 };
@@ -172,7 +167,6 @@ export const getAssignmentByCode = async (req, res) => {
       students: students.rows
     });
   } catch (error) {
-    console.error('Get assignment by code error:', error);
     res.status(500).json({ error: '获取作业信息失败' });
   }
 };
@@ -201,7 +195,6 @@ export const getSubmissions = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get submissions error:', error);
     res.status(500).json({ error: '获取提交列表失败' });
   }
 };
@@ -263,7 +256,6 @@ export const submitAssignment = async (req, res) => {
 
     res.json({ message: '提交成功', submission: result.rows[0] });
   } catch (error) {
-    console.error('Submit assignment error:', error);
     res.status(500).json({ error: '提交作业失败' });
   }
 };
@@ -313,7 +305,6 @@ export const teacherSubmit = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Teacher submit error:', error);
     res.status(500).json({ error: '上传作业失败' });
   }
 };
@@ -343,7 +334,6 @@ export const gradeSubmission = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Grade submission error:', error);
     res.status(500).json({ error: '批改失败' });
   }
 };
@@ -370,7 +360,6 @@ export const batchGrade = async (req, res) => {
 
     res.json({ message: '批量批改成功' });
   } catch (error) {
-    console.error('Batch grade error:', error);
     res.status(500).json({ error: '批量批改失败' });
   }
 };
@@ -452,7 +441,6 @@ export const getStatistics = async (req, res) => {
       scoreDistribution: scoreDistResult.rows
     });
   } catch (error) {
-    console.error('Get statistics error:', error);
     res.status(500).json({ error: '获取统计数据失败' });
   }
 };
@@ -466,7 +454,6 @@ export const getQuickComments = async (req, res) => {
     );
     res.json(result.rows);
   } catch (error) {
-    console.error('Get quick comments error:', error);
     res.status(500).json({ error: '获取快捷评语失败' });
   }
 };
@@ -485,7 +472,6 @@ export const createQuickComment = async (req, res) => {
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Create quick comment error:', error);
     res.status(500).json({ error: '创建快捷评语失败' });
   }
 };
@@ -497,7 +483,6 @@ export const deleteQuickComment = async (req, res) => {
     await query('DELETE FROM quick_comments WHERE id = $1 AND user_id = $2', [id, req.userId]);
     res.json({ message: '删除成功' });
   } catch (error) {
-    console.error('Delete quick comment error:', error);
     res.status(500).json({ error: '删除快捷评语失败' });
   }
 };

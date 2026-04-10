@@ -92,7 +92,6 @@ export const getStudentComment = async (req, res) => {
     const comment = await generateStudentComment(studentData);
     res.json({ comment, studentData });
   } catch (error) {
-    console.error('AI comment error:', error);
     if (error.code === 'ECONNREFUSED' || error.message?.includes('API')) {
       return res.status(503).json({ error: 'AI 服务暂时不可用，请检查 AI_API_KEY 配置' });
     }
@@ -112,7 +111,6 @@ export const getLessonPlan = async (req, res) => {
     const plan = await generateLessonPlan({ grade, subject, topic, duration, objectives, pptContent });
     res.json({ plan });
   } catch (error) {
-    console.error('AI lesson plan error:', error);
     if (error.code === 'ECONNREFUSED' || error.message?.includes('API')) {
       return res.status(503).json({ error: 'AI 服务暂时不可用，请检查 AI_API_KEY 配置' });
     }
@@ -175,7 +173,6 @@ export const uploadPPT = async (req, res) => {
       slideDetails: slideTexts,
     });
   } catch (error) {
-    console.error('PPT upload error:', error);
     res.status(500).json({ error: '解析PPT失败：' + error.message });
   }
 };
@@ -233,7 +230,6 @@ export const getClassSummary = async (req, res) => {
     const summary = await generateClassSummary(classData);
     res.json({ summary, data: classData });
   } catch (error) {
-    console.error('AI class summary error:', error);
     res.status(500).json({ error: '生成课堂小结失败：' + error.message });
   }
 };

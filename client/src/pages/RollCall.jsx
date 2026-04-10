@@ -58,7 +58,7 @@ export const RollCall = () => {
         setSelectedClass(data[0].id);
       }
     } catch (error) {
-      console.error('Failed to load classes:', error);
+      toast.error('加载班级失败');
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,7 @@ export const RollCall = () => {
       setGroups([]);
       setSelectedGroup(null);
     } catch (error) {
-      console.error('Failed to load students:', error);
+      toast.error('加载学生失败');
     }
   };
 

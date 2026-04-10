@@ -34,7 +34,6 @@ export const getExams = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get exams error:', error);
     res.status(500).json({ error: '获取考试列表失败' });
   }
 };
@@ -73,7 +72,6 @@ export const createExam = async (req, res) => {
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Create exam error:', error);
     res.status(500).json({ error: '创建考试失败' });
   }
 };
@@ -96,7 +94,6 @@ export const getExam = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Get exam error:', error);
     res.status(500).json({ error: '获取考试详情失败' });
   }
 };
@@ -131,7 +128,6 @@ export const updateExam = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Update exam error:', error);
     res.status(500).json({ error: '更新考试失败' });
   }
 };
@@ -155,7 +151,6 @@ export const deleteExam = async (req, res) => {
     await query('DELETE FROM exams WHERE id = $1', [examId]);
     res.json({ message: '考试已删除' });
   } catch (error) {
-    console.error('Delete exam error:', error);
     res.status(500).json({ error: '删除考试失败' });
   }
 };
@@ -200,7 +195,6 @@ export const saveScores = async (req, res) => {
 
     res.json({ message: '成绩保存成功', count: results.length });
   } catch (error) {
-    console.error('Save scores error:', error);
     res.status(500).json({ error: '保存成绩失败' });
   }
 };
@@ -268,7 +262,6 @@ export const importScores = async (req, res) => {
       failed
     });
   } catch (error) {
-    console.error('Import scores error:', error);
     res.status(500).json({ error: '导入成绩失败' });
   }
 };
@@ -352,7 +345,6 @@ export const getExamStats = async (req, res) => {
       distribution: distribution.rows
     });
   } catch (error) {
-    console.error('Get exam stats error:', error);
     res.status(500).json({ error: '获取成绩统计失败' });
   }
 };
@@ -410,7 +402,6 @@ export const getExamRanking = async (req, res) => {
 
     res.json(ranking);
   } catch (error) {
-    console.error('Get exam ranking error:', error);
     res.status(500).json({ error: '获取排名失败' });
   }
 };
@@ -475,7 +466,6 @@ export const compareExams = async (req, res) => {
       comparison
     });
   } catch (error) {
-    console.error('Compare exams error:', error);
     res.status(500).json({ error: '对比分析失败' });
   }
 };
@@ -555,7 +545,6 @@ export const getStudentReport = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get student report error:', error);
     res.status(500).json({ error: '获取成绩报告失败' });
   }
 };

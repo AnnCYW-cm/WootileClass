@@ -97,7 +97,6 @@ export const getClassSummary = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get class summary error:', error);
     res.status(500).json({ error: '获取班级概览失败' });
   }
 };
@@ -135,7 +134,6 @@ export const getAttendanceTrend = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get attendance trend error:', error);
     res.status(500).json({ error: '获取出勤趋势失败' });
   }
 };
@@ -185,7 +183,6 @@ export const getScoreRanking = async (req, res) => {
 
     res.json(ranked);
   } catch (error) {
-    console.error('Get score ranking error:', error);
     res.status(500).json({ error: '获取积分排行失败' });
   }
 };
@@ -235,7 +232,6 @@ export const getAssignmentStats = async (req, res) => {
 
     res.json(stats);
   } catch (error) {
-    console.error('Get assignment stats error:', error);
     res.status(500).json({ error: '获取作业统计失败' });
   }
 };
@@ -348,7 +344,6 @@ export const getStudentSummary = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get student summary error:', error);
     res.status(500).json({ error: '获取学生概览失败' });
   }
 };
@@ -385,7 +380,6 @@ export const getStudentScoreTrend = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get student score trend error:', error);
     res.status(500).json({ error: '获取积分趋势失败' });
   }
 };
@@ -424,7 +418,6 @@ export const getStudentAttendanceCalendar = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get student attendance calendar error:', error);
     res.status(500).json({ error: '获取出勤日历失败' });
   }
 };
@@ -472,7 +465,6 @@ export const getStudentAssignments = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get student assignments error:', error);
     res.status(500).json({ error: '获取学生作业失败' });
   }
 };
@@ -530,7 +522,6 @@ export const getPendingTodos = async (req, res) => {
       pending_redemptions: parseInt(pendingRedemptionResult.rows[0].count)
     });
   } catch (error) {
-    console.error('Get pending todos error:', error);
     res.status(500).json({ error: '获取待办事项失败' });
   }
 };

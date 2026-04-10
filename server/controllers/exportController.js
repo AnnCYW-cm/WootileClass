@@ -66,7 +66,6 @@ export const previewExport = async (req, res) => {
       class_name: classCheck.rows[0].name
     });
   } catch (error) {
-    console.error('Preview export error:', error);
     res.status(500).json({ error: '预览数据失败' });
   }
 };
@@ -147,7 +146,6 @@ export const downloadExport = async (req, res) => {
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
-    console.error('Download export error:', error);
     res.status(500).json({ error: '导出数据失败' });
   }
 };
@@ -420,7 +418,6 @@ export const getSemester = async (req, res) => {
     );
     res.json(result.rows);
   } catch (error) {
-    console.error('Get semester error:', error);
     res.status(500).json({ error: '获取学期设置失败' });
   }
 };
@@ -450,7 +447,6 @@ export const setSemester = async (req, res) => {
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Set semester error:', error);
     res.status(500).json({ error: '设置学期失败' });
   }
 };

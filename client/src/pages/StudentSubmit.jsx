@@ -60,9 +60,19 @@ export const StudentSubmit = () => {
 
     setSubmitting(true);
     try {
-      // In a real app, you'd upload images to a server first
-      // For now, simulate with placeholder URLs
-      const imageUrls = images.map((_, i) => `/uploads/submission_${code}_${selectedStudent}_${i}.jpg`);
+      // Upload images first
+      const formData = new FormData();
+      images.forEach(img => formData.append('images', img.file));
+
+      const uploadRes = await fetch(`/api/assignments/submit/${code}/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!uploadRes.ok) {
+        const err = await uploadRes.json();
+        throw new Error(err.error || '图片上传失败');
+      }
+      const { urls: imageUrls } = await uploadRes.json();
 
       await assignmentsApi.submitByCode(code, {
         student_id: selectedStudent,

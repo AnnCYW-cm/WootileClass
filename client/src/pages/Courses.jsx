@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { coursesApi, membershipApi } from '../services/api';
+import { useToastContext } from '../store/ToastContext';
 
 export const Courses = () => {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ export const Courses = () => {
   const [selectedGrade, setSelectedGrade] = useState(null);
   const [subjectFilter, setSubjectFilter] = useState('all');
   const [usageStats, setUsageStats] = useState(null);
+  const toast = useToastContext();
 
   const loadCourses = async () => {
     setLoading(true);
@@ -16,14 +18,14 @@ export const Courses = () => {
       const data = await coursesApi.getAll();
       setCourses(data);
     } catch (error) {
-      console.error('Failed to load courses:', error);
+      toast.error('加载课程失败');
     } finally {
       setLoading(false);
     }
   };
 
   const loadUsageStats = () => {
-    membershipApi.getUsage().then(setUsageStats).catch(console.error);
+    membershipApi.getUsage().then(setUsageStats).catch(() => {});
   };
 
   useEffect(() => {

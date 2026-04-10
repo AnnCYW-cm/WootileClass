@@ -25,7 +25,6 @@ export const getPlans = async (req, res) => {
   try {
     res.json(MEMBERSHIP_PLANS);
   } catch (error) {
-    console.error('Get plans error:', error);
     res.status(500).json({ error: '获取会员方案失败' });
   }
 };
@@ -55,7 +54,6 @@ export const getMembershipStatus = async (req, res) => {
       days_remaining: isActive ? Math.ceil((new Date(user.membership_expires_at) - now) / (1000 * 60 * 60 * 24)) : 0
     });
   } catch (error) {
-    console.error('Get membership status error:', error);
     res.status(500).json({ error: '获取会员状态失败' });
   }
 };
@@ -108,7 +106,6 @@ export const purchaseMembership = async (req, res) => {
       price: planDetails.price
     });
   } catch (error) {
-    console.error('Purchase membership error:', error);
     res.status(500).json({ error: '购买会员失败' });
   }
 };
@@ -136,7 +133,6 @@ export const checkPremiumAccess = async (req, res, next) => {
     req.isPremium = isActive;
     next();
   } catch (error) {
-    console.error('Check premium access error:', error);
     res.status(500).json({ error: '检查会员状态失败' });
   }
 };
@@ -161,7 +157,6 @@ export const getUsageStats = async (req, res) => {
         : null
     });
   } catch (error) {
-    console.error('Get usage stats error:', error);
     res.status(500).json({ error: '获取使用统计失败' });
   }
 };
@@ -177,7 +172,6 @@ export const getMembershipPlans = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get membership plans error:', error);
     res.status(500).json({ error: '获取会员方案失败' });
   }
 };

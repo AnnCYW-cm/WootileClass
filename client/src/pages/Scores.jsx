@@ -72,7 +72,7 @@ export const Scores = () => {
         setSelectedClass(data[0].id);
       }
     } catch (error) {
-      console.error('Failed to load classes:', error);
+      toast.error('加载班级失败');
     } finally {
       setLoading(false);
     }
@@ -83,7 +83,7 @@ export const Scores = () => {
       const data = await scoresApi.getPresets();
       setPresets(data);
     } catch (error) {
-      console.error('Failed to load presets:', error);
+      toast.error('加载预设失败');
     }
   };
 
@@ -92,7 +92,7 @@ export const Scores = () => {
       const data = await scoresApi.getByClass(selectedClass);
       setStudents(data);
     } catch (error) {
-      console.error('Failed to load students:', error);
+      toast.error('加载学生数据失败');
     }
   };
 
@@ -101,7 +101,7 @@ export const Scores = () => {
       const data = await scoresApi.getRanking(selectedClass, rankingPeriod);
       setRanking(data);
     } catch (error) {
-      console.error('Failed to load ranking:', error);
+      toast.error('加载排名失败');
     }
   };
 

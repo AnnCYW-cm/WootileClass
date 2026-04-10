@@ -225,6 +225,21 @@ export const aiApi = {
   getStudentComment: (studentId) => request(`/ai/comment/student/${studentId}`),
   generateLessonPlan: (data) => request('/ai/lesson-plan', { method: 'POST', body: JSON.stringify(data) }),
   getClassSummary: (classId) => request(`/ai/summary/class/${classId}`),
+  getCurriculum: (grade, subject) => request(`/ai/curriculum/${encodeURIComponent(grade)}/${encodeURIComponent(subject)}`),
+  getRelatedAnimations: (grade, subject) => request(`/ai/related-animations/${encodeURIComponent(grade)}/${encodeURIComponent(subject)}`),
+  uploadPpt: async (file) => {
+    const token = getToken();
+    const formData = new FormData();
+    formData.append('ppt', file);
+    const response = await fetch(`${API_BASE}/ai/upload-ppt`, {
+      method: 'POST',
+      headers: { ...(token && { Authorization: `Bearer ${token}` }) },
+      body: formData,
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '上传失败');
+    return data;
+  },
 };
 
 // Videos API

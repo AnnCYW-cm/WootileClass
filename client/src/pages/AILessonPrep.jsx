@@ -1,23 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useToastContext } from '../store/ToastContext';
-
-const API_BASE = '/api';
-const getToken = () => localStorage.getItem('token');
-
-const request = async (endpoint, options = {}) => {
-  const token = getToken();
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
-    },
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || '请求失败');
-  return data;
-};
+import { aiApi } from '../services/api';
 
 const grades = ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级', '初一', '初二', '初三', '高一', '高二', '高三'];
 
@@ -67,17 +50,12 @@ export const AILessonPrep = () => {
   useEffect(() => {
     if (grade && subject) {
       setCurriculumLoading(true);
-      fetch(`${API_BASE}/ai/curriculum/${encodeURIComponent(grade)}/${encodeURIComponent(subject)}`)
-        .then(r => r.ok ? r.json() : null)
+      aiApi.getCurriculum(grade, subject)
         .then(data => setCurriculum(data))
         .catch(() => setCurriculum(null))
         .finally(() => setCurriculumLoading(false));
 
-      // Also load related animations
-      fetch(`${API_BASE}/ai/related-animations/${encodeURIComponent(grade)}/${encodeURIComponent(subject)}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      })
-        .then(r => r.ok ? r.json() : [])
+      aiApi.getRelatedAnimations(grade, subject)
         .then(data => setRelatedAnimations(data))
         .catch(() => setRelatedAnimations([]));
     } else {
@@ -94,16 +72,7 @@ export const AILessonPrep = () => {
     }
     setPptUploading(true);
     try {
-      const token = localStorage.getItem('token');
-      const formData = new FormData();
-      formData.append('ppt', file);
-      const response = await fetch(`${API_BASE}/ai/upload-ppt`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
+      const data = await aiApi.uploadPpt(file);
       setPptContent(data.content);
       setPptFileName(file.name);
       setPptSlides(data.slides);
@@ -130,10 +99,7 @@ export const AILessonPrep = () => {
     setLoading(true);
     setResult('');
     try {
-      const data = await request('/ai/lesson-plan', {
-        method: 'POST',
-        body: JSON.stringify({ grade, subject, topic, duration, objectives, pptContent: pptContent || undefined }),
-      });
+      const data = await aiApi.generateLessonPlan({ grade, subject, topic, duration, objectives, pptContent: pptContent || undefined });
       setResult(data.plan);
       setHistory(prev => [{ grade, subject, topic, plan: data.plan, time: new Date() }, ...prev.slice(0, 9)]);
       toast.success('教案已生成');

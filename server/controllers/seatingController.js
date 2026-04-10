@@ -65,7 +65,6 @@ export const getSeating = async (req, res) => {
       students: studentList
     });
   } catch (error) {
-    console.error('Get seating error:', error);
     res.status(500).json({ error: '获取座位表失败' });
   }
 };
@@ -118,7 +117,6 @@ export const saveSeating = async (req, res) => {
 
     res.status(201).json(seatingResult.rows[0]);
   } catch (error) {
-    console.error('Save seating error:', error);
     res.status(500).json({ error: '保存座位表失败' });
   }
 };
@@ -258,7 +256,6 @@ export const randomSeating = async (req, res) => {
       assignments: allAssignments
     });
   } catch (error) {
-    console.error('Random seating error:', error);
     res.status(500).json({ error: '随机排座失败' });
   }
 };
@@ -381,7 +378,6 @@ export const autoSeating = async (req, res) => {
       assignments
     });
   } catch (error) {
-    console.error('Auto seating error:', error);
     res.status(500).json({ error: '自动排座失败' });
   }
 };
@@ -409,7 +405,6 @@ export const getSeatingHistory = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get seating history error:', error);
     res.status(500).json({ error: '获取座位表历史失败' });
   }
 };
@@ -442,7 +437,6 @@ export const toggleSeatLock = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Toggle seat lock error:', error);
     res.status(500).json({ error: '更新座位锁定状态失败' });
   }
 };

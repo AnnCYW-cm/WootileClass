@@ -22,7 +22,7 @@ export const Dashboard = () => {
       setClasses(classData);
       setTodos(todoData);
     } catch (error) {
-      console.error('Failed to load dashboard:', error);
+      // silent - dashboard shows empty state
     } finally {
       setLoading(false);
     }

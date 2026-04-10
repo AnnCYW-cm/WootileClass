@@ -27,7 +27,6 @@ export const getClassScores = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get class scores error:', error);
     res.status(500).json({ error: '获取积分列表失败' });
   }
 };
@@ -66,7 +65,6 @@ export const addScore = async (req, res) => {
       total_score: parseInt(totalResult.rows[0].total_score)
     });
   } catch (error) {
-    console.error('Add score error:', error);
     res.status(500).json({ error: '添加积分失败' });
   }
 };
@@ -100,7 +98,6 @@ export const batchAddScore = async (req, res) => {
 
     res.status(201).json({ message: '批量添加积分成功', records: results });
   } catch (error) {
-    console.error('Batch add score error:', error);
     res.status(500).json({ error: '批量添加积分失败' });
   }
 };
@@ -147,7 +144,6 @@ export const getRanking = async (req, res) => {
 
     res.json(ranked);
   } catch (error) {
-    console.error('Get ranking error:', error);
     res.status(500).json({ error: '获取排行榜失败' });
   }
 };
@@ -178,7 +174,6 @@ export const getStudentHistory = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get student history error:', error);
     res.status(500).json({ error: '获取积分历史失败' });
   }
 };
@@ -207,7 +202,6 @@ export const getPresets = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get presets error:', error);
     res.status(500).json({ error: '获取预设失败' });
   }
 };
@@ -229,7 +223,6 @@ export const createPreset = async (req, res) => {
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Create preset error:', error);
     res.status(500).json({ error: '创建预设失败' });
   }
 };
@@ -242,7 +235,6 @@ export const deletePreset = async (req, res) => {
     await query('DELETE FROM score_presets WHERE id = $1 AND user_id = $2', [id, req.userId]);
     res.json({ message: '预设已删除' });
   } catch (error) {
-    console.error('Delete preset error:', error);
     res.status(500).json({ error: '删除预设失败' });
   }
 };
@@ -261,7 +253,6 @@ export const resetScores = async (req, res) => {
     await query('DELETE FROM score_records WHERE class_id = $1', [classId]);
     res.json({ message: '积分已重置' });
   } catch (error) {
-    console.error('Reset scores error:', error);
     res.status(500).json({ error: '重置积分失败' });
   }
 };

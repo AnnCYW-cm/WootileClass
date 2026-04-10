@@ -29,7 +29,6 @@ export const getAttendance = async (req, res) => {
     const result = await query(queryText, params);
     res.json(result.rows);
   } catch (error) {
-    console.error('Get attendance error:', error);
     res.status(500).json({ error: '获取点名记录失败' });
   }
 };
@@ -72,7 +71,6 @@ export const recordAttendance = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Record attendance error:', error);
     res.status(500).json({ error: '记录点名失败' });
   }
 };
@@ -121,7 +119,6 @@ export const batchRecordAttendance = async (req, res) => {
 
     res.json({ message: '批量点名成功', records: results });
   } catch (error) {
-    console.error('Batch record attendance error:', error);
     res.status(500).json({ error: '批量点名失败' });
   }
 };
@@ -147,7 +144,6 @@ export const getRandomStudent = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Get random student error:', error);
     res.status(500).json({ error: '随机抽取学生失败' });
   }
 };
@@ -206,7 +202,6 @@ export const getAttendanceStats = async (req, res) => {
 
     res.json({ students, summary });
   } catch (error) {
-    console.error('Get attendance stats error:', error);
     res.status(500).json({ error: '获取统计数据失败' });
   }
 };

@@ -17,7 +17,6 @@ export const getRewards = async (req, res) => {
     );
     res.json(result.rows);
   } catch (error) {
-    console.error('Get rewards error:', error);
     res.status(500).json({ error: '获取奖品列表失败' });
   }
 };
@@ -46,7 +45,6 @@ export const createReward = async (req, res) => {
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Create reward error:', error);
     res.status(500).json({ error: '创建奖品失败' });
   }
 };
@@ -74,7 +72,6 @@ export const updateReward = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Update reward error:', error);
     res.status(500).json({ error: '更新奖品失败' });
   }
 };
@@ -96,7 +93,6 @@ export const deleteReward = async (req, res) => {
     await query('DELETE FROM redemption_rewards WHERE id = $1', [id]);
     res.json({ message: '奖品已删除' });
   } catch (error) {
-    console.error('Delete reward error:', error);
     res.status(500).json({ error: '删除奖品失败' });
   }
 };
@@ -163,7 +159,6 @@ export const redeemReward = async (req, res) => {
       redemption: redemptionResult.rows[0]
     });
   } catch (error) {
-    console.error('Redeem reward error:', error);
     res.status(500).json({ error: '兑换失败' });
   }
 };
@@ -191,7 +186,6 @@ export const getRedemptionHistory = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get redemption history error:', error);
     res.status(500).json({ error: '获取兑换记录失败' });
   }
 };
@@ -212,7 +206,6 @@ export const getStudentRedemptions = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get student redemptions error:', error);
     res.status(500).json({ error: '获取兑换记录失败' });
   }
 };

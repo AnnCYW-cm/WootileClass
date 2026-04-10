@@ -24,7 +24,6 @@ export const previewReport = async (req, res) => {
 
     res.json(reportData);
   } catch (error) {
-    console.error('Preview report error:', error);
     res.status(500).json({ error: '预览报告失败' });
   }
 };
@@ -88,7 +87,6 @@ export const generateReport = async (req, res) => {
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Generate report error:', error);
     res.status(500).json({ error: '生成报告失败' });
   }
 };
@@ -172,7 +170,6 @@ export const batchGenerateReports = async (req, res) => {
       reports
     });
   } catch (error) {
-    console.error('Batch generate reports error:', error);
     res.status(500).json({ error: '批量生成报告失败' });
   }
 };
@@ -216,7 +213,6 @@ export const getReport = async (req, res) => {
       data: reportData
     });
   } catch (error) {
-    console.error('Get report error:', error);
     res.status(500).json({ error: '获取报告失败' });
   }
 };
@@ -278,7 +274,6 @@ export const getReportByShareUrl = async (req, res) => {
       data: reportData
     });
   } catch (error) {
-    console.error('Get report by share URL error:', error);
     res.status(500).json({ error: '获取报告失败' });
   }
 };
@@ -314,7 +309,6 @@ export const getReportHistory = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Get report history error:', error);
     res.status(500).json({ error: '获取报告历史失败' });
   }
 };
@@ -366,7 +360,6 @@ export const deleteReport = async (req, res) => {
     await query('DELETE FROM parent_reports WHERE id = $1', [reportId]);
     res.json({ message: '报告已删除' });
   } catch (error) {
-    console.error('Delete report error:', error);
     res.status(500).json({ error: '删除报告失败' });
   }
 };

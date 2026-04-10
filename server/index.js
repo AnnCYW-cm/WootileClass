@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { initDb } from './db/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -27,11 +29,36 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
+app.use(helmet());
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+
+// Global rate limit: 200 requests per minute
+const globalLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: '请求过于频繁，请稍后再试' },
+});
+app.use(globalLimiter);
+
+// Strict rate limit for auth routes: 10 attempts per minute
+const authLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  message: { error: '登录尝试过于频繁，请1分钟后再试' },
+});
+
+// Strict rate limit for AI routes: 20 requests per minute
+const aiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  message: { error: 'AI 请求过于频繁，请稍后再试' },
+});
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/classes', classRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/attendance', attendanceRoutes);
@@ -47,7 +74,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/animations', animationRoutes);
 app.use('/api/videos', videoRoutes);
-app.use('/api/ai', aiRoutes);
+app.use('/api/ai', aiLimiter, aiRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static('uploads'));

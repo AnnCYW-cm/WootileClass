@@ -14,7 +14,7 @@ export const Classes = () => {
 
   // 获取使用量统计
   useEffect(() => {
-    membershipApi.getUsage().then(setUsageStats).catch(console.error);
+    membershipApi.getUsage().then(setUsageStats).catch(() => {});
   }, [classes]);
 
   const handleSubmit = async (e) => {
@@ -30,7 +30,7 @@ export const Classes = () => {
       modal.close();
       reload();
       // 刷新使用量统计
-      membershipApi.getUsage().then(setUsageStats).catch(console.error);
+      membershipApi.getUsage().then(setUsageStats).catch(() => {});
     } catch (err) {
       if (err.code === 'LIMIT_EXCEEDED') {
         modal.setError(`${err.message}（当前：${err.current}/${err.limit}）`);

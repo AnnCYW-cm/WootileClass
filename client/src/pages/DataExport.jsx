@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { classesApi } from '../services/api';
 import { useToastContext } from '../store/ToastContext';
 
 export const DataExport = () => {
@@ -34,14 +35,11 @@ export const DataExport = () => {
 
   const fetchClasses = async () => {
     try {
-      const res = await fetch('/api/classes', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      const data = await res.json();
+      const data = await classesApi.getAll();
       setClasses(data);
       if (data.length > 0) setSelectedClass(data[0].id);
     } catch (error) {
-      console.error('获取班级失败:', error);
+      toast.error('获取班级失败');
     }
   };
 
